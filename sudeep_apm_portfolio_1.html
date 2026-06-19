@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudeep Pandey — Associate Product Manager</title>
+<style>
+  :root {
+    --bg: #ffffff; --bg2: #f6f8fb; --surface: #ffffff; --surface2: #f3f6fa;
+    --border: #e4e9f0; --border2: #d4dce8;
+    --accent: #2563eb; --accent-soft: #eff4ff;
+    --accent2: #7c3aed; --accent2-soft: #f4eeff;
+    --accent3: #0d9488; --accent3-soft: #e6f6f3;
+    --accent4: #e11d48; --accent4-soft: #fdeef1;
+    --accent5: #d97706; --accent5-soft: #fdf3e6;
+    --ink: #0f1b2d; --text: #2b3a4f; --text2: #5d6b80; --text3: #94a1b4;
+    --font-display: 'Georgia','Times New Roman',serif;
+    --font-body: system-ui,-apple-system,'Segoe UI',sans-serif;
+    --font-mono: 'JetBrains Mono','SF Mono','Fira Mono','Courier New',monospace;
+    --r: 14px; --r2: 9px;
+    --shadow-sm: 0 1px 2px rgba(15,27,45,0.04), 0 1px 3px rgba(15,27,45,0.06);
+    --shadow: 0 4px 16px rgba(15,27,45,0.06), 0 1px 4px rgba(15,27,45,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 36px; }
+  .nav-logo { font-family: var(--font-display); font-size: 17px; color: var(--ink); }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 4px; align-items: center; }
+  .nav-links a { color: var(--text2); text-decoration: none; font-size: 13px; padding: 7px 13px; border-radius: 7px; transition: all 0.18s; font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); background: var(--surface2); }
+  .nav-cta { background: var(--ink) !important; color: #fff !important; font-weight: 600 !important; }
+  .nav-cta:hover { background: var(--accent) !important; }
+
+  section { padding: 92px 0 76px; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 36px; }
+
+  #hero { min-height: 88vh; display: flex; align-items: center; background: radial-gradient(ellipse 70% 60% at 75% 30%, rgba(37,99,235,0.05) 0%, transparent 65%), radial-gradient(ellipse 50% 50% at 15% 80%, rgba(124,58,237,0.04) 0%, transparent 60%), var(--bg); padding-top: 60px; }
+  .hero-inner { max-width: 760px; }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
+  .hero-eyebrow::before { content: ''; display: block; width: 28px; height: 2px; background: var(--accent); }
+  h1 { font-family: var(--font-display); font-size: clamp(38px,5.5vw,60px); line-height: 1.08; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 26px; font-weight: 700; }
+  h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub { font-size: 18px; color: var(--text2); line-height: 1.7; margin-bottom: 34px; max-width: 640px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 38px; }
+  .pill { font-size: 12px; font-weight: 600; padding: 7px 15px; border-radius: 100px; border: 1px solid var(--border2); }
+  .pill-blue { color: var(--accent); background: var(--accent-soft); }
+  .pill-purple { color: var(--accent2); background: var(--accent2-soft); }
+  .pill-green { color: var(--accent3); background: var(--accent3-soft); }
+  .pill-orange { color: var(--accent5); background: var(--accent5-soft); }
+
+  .btn-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: var(--r2); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid transparent; transition: all 0.18s; }
+  .btn-primary { background: var(--ink); color: #fff; }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .btn-secondary { background: var(--surface); color: var(--ink); border-color: var(--border2); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .section-label::before { content: ''; display: block; width: 22px; height: 2px; background: var(--accent); }
+  h2 { font-family: var(--font-display); font-size: clamp(28px,4vw,40px); line-height: 1.18; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 14px; font-weight: 700; }
+  .section-desc { font-size: 15.5px; color: var(--text2); max-width: 620px; line-height: 1.7; margin-bottom: 48px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 26px; box-shadow: var(--shadow-sm); transition: border-color 0.18s, box-shadow 0.18s; }
+  .card:hover { border-color: var(--border2); box-shadow: var(--shadow); }
+  .card-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .card-sub { font-size: 13px; color: var(--text2); }
+
+  .impact-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .impact-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 26px 22px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.18s, box-shadow 0.18s; }
+  .impact-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .impact-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .impact-card.blue::before { background: var(--accent); }
+  .impact-card.green::before { background: var(--accent3); }
+  .impact-card.purple::before { background: var(--accent2); }
+  .impact-card.orange::before { background: var(--accent5); }
+  .impact-card.red::before { background: var(--accent4); }
+  .impact-num { font-family: var(--font-display); font-size: 42px; font-weight: 700; line-height: 1; margin-bottom: 10px; }
+  .impact-num.blue { color: var(--accent); } .impact-num.green { color: var(--accent3); } .impact-num.purple { color: var(--accent2); } .impact-num.orange { color: var(--accent5); } .impact-num.red { color: var(--accent4); }
+  .impact-desc { font-size: 13px; color: var(--text2); line-height: 1.55; }
+  .impact-source { font-size: 11px; color: var(--text3); margin-top: 10px; font-weight: 600; }
+
+  .tab-bar { display: inline-flex; gap: 4px; margin-bottom: 32px; background: var(--surface2); padding: 5px; border-radius: var(--r2); border: 1px solid var(--border); }
+  .tab-btn { padding: 9px 20px; border-radius: 7px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; background: transparent; color: var(--text2); transition: all 0.18s; }
+  .tab-btn.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  .arch-flow { display: flex; align-items: center; flex-wrap: wrap; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 28px 24px; margin-bottom: 22px; }
+  .arch-box { background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; padding: 9px 13px; font-size: 12px; font-weight: 600; white-space: nowrap; text-align: center; box-shadow: var(--shadow-sm); }
+  .arch-box.inhouse { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .arch-box.external { border-color: var(--accent3); color: var(--accent3); background: var(--accent3-soft); }
+  .arch-arrow { color: var(--text3); font-size: 15px; padding: 0 6px; flex-shrink: 0; }
+  .legend { display: flex; gap: 22px; margin-bottom: 18px; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text2); }
+  .legend-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .arch-split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+  .arch-half { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 22px; box-shadow: var(--shadow-sm); }
+  .arch-half-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 14px; }
+  .arch-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
+  .arch-item:last-child { border-bottom: none; }
+  .arch-item::before { content: '→'; color: var(--text3); font-size: 11px; }
+
+  .metrics-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 18px; box-shadow: var(--shadow-sm); }
+  .metric-card-val { font-size: 28px; font-weight: 700; font-family: var(--font-display); color: var(--ink); }
+  .metric-card-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+  .metric-card-trend { font-size: 11px; color: var(--accent3); margin-top: 7px; font-weight: 600; }
+
+  .sim-container { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .sim-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 24px; box-shadow: var(--shadow-sm); }
+  .sim-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); font-weight: 700; margin-bottom: 16px; }
+  .state-list { display: flex; flex-direction: column; gap: 6px; }
+  .state-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: var(--font-mono); border: 1px solid var(--border); color: var(--text3); background: var(--surface2); transition: all 0.4s; }
+  .state-item .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); flex-shrink: 0; transition: all 0.4s; }
+  .state-item.done { border-color: var(--accent3); color: var(--accent3); background: var(--accent3-soft); }
+  .state-item.done .dot { background: var(--accent3); }
+  .state-item.active { border-color: var(--accent5); color: var(--accent5); background: var(--accent5-soft); }
+  .state-item.active .dot { background: var(--accent5); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+
+  .transcript-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r2); padding: 16px; min-height: 200px; font-size: 13px; overflow-y: auto; max-height: 290px; }
+  .transcript-line { margin-bottom: 12px; animation: fadeIn 0.4s ease; }
+  .transcript-line .who { font-weight: 700; font-size: 11px; margin-bottom: 2px; }
+  .transcript-line .who.bot { color: var(--accent); }
+  .transcript-line .who.user { color: var(--accent3); }
+  .transcript-line .msg { color: var(--text); }
+  .disposition-badge { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 7px; font-size: 13px; font-weight: 700; font-family: var(--font-mono); margin-top: 14px; border: 1px solid var(--accent3); color: var(--accent3); background: var(--accent3-soft); opacity: 0; transition: opacity 0.5s; }
+  .disposition-badge.show { opacity: 1; }
+
+  .ownership-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ownership-item { display: flex; align-items: center; gap: 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--text); }
+  .ownership-item::before { content: '✦'; color: var(--accent); font-size: 10px; flex-shrink: 0; }
+
+  .variant-demo { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .vahan-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 24px; box-shadow: var(--shadow-sm); }
+  .data-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .data-row:last-child { border-bottom: none; }
+  .data-key { color: var(--text3); font-family: var(--font-mono); font-size: 12px; }
+  .data-val { color: var(--ink); font-weight: 600; }
+  .candidate-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+  .candidate-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 7px; border: 1px solid var(--border); font-size: 12px; font-family: var(--font-mono); background: var(--surface2); transition: all 0.4s; }
+  .candidate-item.selected { border-color: var(--accent3); background: var(--accent3-soft); color: var(--accent3); font-weight: 700; }
+  .candidate-item.rejected { opacity: 0.4; text-decoration: line-through; }
+  .rule-checks { display: flex; flex-direction: column; gap: 4px; margin: 16px 0; }
+  .rule-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text2); padding: 6px 0; }
+  .rule-item .check { font-size: 14px; transition: all 0.3s; font-weight: 700; }
+  .rule-item .check.pass { color: var(--accent3); }
+  .rule-item .check.pending { color: var(--text3); }
+  .result-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r2); padding: 18px; margin-top: 14px; opacity: 0; transition: all 0.5s; transform: translateY(8px); }
+  .result-box.show { opacity: 1; transform: none; }
+  .result-box .r-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .result-box .r-val { font-size: 15px; font-weight: 700; color: var(--ink); }
+
+  #triggerCallBtn, #runFallbackBtn { padding: 11px 22px; border-radius: var(--r2); background: var(--ink); color: #fff; border: none; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.18s; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  #triggerCallBtn:hover, #runFallbackBtn:hover { background: var(--accent); }
+  #triggerCallBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+  #runFallbackBtn { background: var(--accent2); }
+  #runFallbackBtn:hover { background: #6b2bd6; }
+
+  .project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 28px; box-shadow: var(--shadow-sm); transition: transform 0.18s, box-shadow 0.18s; }
+  .project-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .project-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 11px; border-radius: 5px; margin-bottom: 14px; }
+  .project-h { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+  .project-desc { font-size: 13.5px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
+  .project-impact { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-top: 16px; }
+  .quote-card { background: var(--bg2); border: 1px solid var(--border2); border-radius: 11px; padding: 18px; margin-top: 12px; }
+  .quote-range { font-size: 22px; font-weight: 700; color: var(--accent5); }
+  .quote-sub { font-size: 12px; color: var(--text3); margin-bottom: 12px; }
+  .sold-cars { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .sold-car-chip { font-size: 11px; padding: 4px 10px; border-radius: 5px; background: var(--surface); border: 1px solid var(--border2); color: var(--text2); }
+  .journey-flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .journey-step { font-size: 12px; padding: 6px 12px; border-radius: 7px; background: var(--surface2); border: 1px solid var(--border); color: var(--text2); }
+  .journey-step.highlight { border-color: var(--accent); color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+  .journey-arrow { color: var(--text3); font-size: 14px; }
+  .stat-pill { text-align: center; background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; padding: 12px 20px; }
+  .stat-pill-num { font-size: 24px; font-weight: 700; font-family: var(--font-display); }
+  .stat-pill-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  .exp-list { display: flex; flex-direction: column; gap: 18px; }
+  .exp-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 26px; box-shadow: var(--shadow-sm); display: grid; grid-template-columns: 180px 1fr; gap: 28px; transition: border-color 0.18s, box-shadow 0.18s; }
+  .exp-card:hover { border-color: var(--border2); box-shadow: var(--shadow); }
+  .exp-meta-role { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .exp-meta-co { font-size: 17px; font-weight: 700; color: var(--ink); font-family: var(--font-display); margin-bottom: 6px; line-height: 1.2; }
+  .exp-meta-date { font-size: 12px; color: var(--text3); }
+  .exp-points { list-style: none; }
+  .exp-points li { font-size: 13.5px; color: var(--text); line-height: 1.6; padding-left: 20px; position: relative; margin-bottom: 10px; }
+  .exp-points li:last-child { margin-bottom: 0; }
+  .exp-points li::before { content: ''; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .exp-points li b { color: var(--ink); font-weight: 700; }
+
+  .op-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+  .op-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 18px; text-align: center; box-shadow: var(--shadow-sm); transition: transform 0.18s, box-shadow 0.18s; }
+  .op-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .op-icon { font-size: 24px; margin-bottom: 10px; }
+  .op-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .op-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  .skill-grid { display: flex; flex-wrap: wrap; gap: 9px; }
+  .skill-chip { padding: 8px 16px; border-radius: 100px; background: var(--surface); border: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text); transition: all 0.18s; box-shadow: var(--shadow-sm); }
+  .skill-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 26px; box-shadow: var(--shadow-sm); }
+  .info-card h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); font-weight: 700; margin-bottom: 16px; }
+  .award-item { font-size: 13.5px; color: var(--text); line-height: 1.6; padding-left: 20px; position: relative; margin-bottom: 12px; }
+  .award-item:last-child { margin-bottom: 0; }
+  .award-item::before { content: '★'; position: absolute; left: 0; top: 1px; color: var(--accent5); font-size: 12px; }
+  .award-item b { color: var(--ink); }
+
+  .quote-block { border-left: 3px solid var(--accent2); padding: 16px 20px; background: var(--accent2-soft); border-radius: 0 var(--r2) var(--r2) 0; font-size: 14px; color: var(--text); line-height: 1.7; font-style: italic; margin: 20px 0; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; background: var(--accent-soft); border: 1px solid var(--border2); color: var(--accent); }
+  .blue-text { color: var(--accent); font-weight: 700; }
+  .green-text { color: var(--accent3); font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 52px 0; text-align: center; }
+  .footer-name { font-family: var(--font-display); font-size: 28px; color: var(--ink); margin-bottom: 8px; }
+  .footer-name span { color: var(--accent); }
+  .footer-sub { font-size: 14px; color: var(--text2); margin-bottom: 14px; }
+  .footer-contact { color: var(--text3); font-size: 13px; margin-bottom: 22px; }
+  .footer-contact a { color: var(--accent); text-decoration: none; }
+  .footer-pills { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 18px; } .container { padding: 0 18px; }
+    .nav-links a:not(.nav-cta) { display: none; }
+    .sim-container, .variant-demo, .two-col, .project-grid, .info-grid { grid-template-columns: 1fr; }
+    .impact-grid, .metrics-grid, .op-grid { grid-template-columns: 1fr 1fr; }
+    .ownership-list, .arch-split { grid-template-columns: 1fr; }
+    .exp-card { grid-template-columns: 1fr; gap: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Sudeep <span>Pandey</span></div>
+  <div class="nav-links">
+    <a href="#hero">Home</a>
+    <a href="#impact">Impact</a>
+    <a href="#calling">AI Calling</a>
+    <a href="#variant">Variant Matching</a>
+    <a href="#growth">Growth</a>
+    <a href="#experience">Experience</a>
+    <a href="#operating">How I Work</a>
+    <a href="mailto:pandey.sudeep.02@gmail.com" class="nav-cta">Get in touch</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Associate Product Manager · CARS24</div>
+      <h1>I build <em>AI-led</em> consumer products that move real business metrics</h1>
+      <p class="hero-sub">I'm Sudeep Pandey — a product manager focused on productizing AI safely, improving consumer conversion funnels, and shipping data-backed product changes. This portfolio walks through my product work at CARS24 and earlier roles across Bain &amp; Company, Magicpin, and more.</p>
+      <div class="pill-row">
+        <span class="pill pill-blue">AI Product Workflows</span>
+        <span class="pill pill-green">Consumer Journey Optimization</span>
+        <span class="pill pill-purple">Data-backed Execution</span>
+      </div>
+      <div class="btn-row">
+        <a href="#calling" class="btn btn-primary">View AI Calling Platform →</a>
+        <a href="#variant" class="btn btn-secondary">View Variant Matching</a>
+        <a href="#impact" class="btn btn-secondary">See the Impact</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="impact" style="background:var(--bg2)">
+  <div class="container">
+    <div class="section-label">Measured Outcomes</div>
+    <h2>Product Impact at a Glance</h2>
+    <p class="section-desc">Every project below was instrumented and tied to a business metric — from variant resolution accuracy to appointment bookings and transaction volume.</p>
+    <div class="impact-grid">
+      <div class="impact-card blue"><div class="impact-num blue">83%</div><div class="impact-desc">Vehicle variant resolution success rate, up from 55%, via an OpenAI-powered fallback system</div><div class="impact-source">CARS24 · AI Variant Matching</div></div>
+      <div class="impact-card green"><div class="impact-num green">70%</div><div class="impact-desc">Reduction in outbound calling cost through an AI voice agent orchestration platform</div><div class="impact-source">CARS24 · AI Calling Platform</div></div>
+      <div class="impact-card purple"><div class="impact-num purple">+15%</div><div class="impact-desc">Appointment bookings uplift from rebuilding the CarQuote page with recently sold comparable cars</div><div class="impact-source">CARS24 · CarQuote</div></div>
+      <div class="impact-card orange"><div class="impact-num orange">+20%</div><div class="impact-desc">Appointment bookings uplift through redesigned contextual drop-off nudges</div><div class="impact-source">CARS24 · Drop-off Nudges</div></div>
+      <div class="impact-card red"><div class="impact-num red">+30%</div><div class="impact-desc">Transaction jump on Magicpin's flagship Bling Sale via a dynamic discounting model</div><div class="impact-source">Magicpin · Bling Sale</div></div>
+      <div class="impact-card green"><div class="impact-num green">+35%</div><div class="impact-desc">User engagement increase at The Bio Hackers Company through A/B-tested feature launches</div><div class="impact-source">Bio Hackers · Growth</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="calling">
+  <div class="container">
+    <div class="section-label">Featured Project · CARS24</div>
+    <h2>AI Voice Calling Platform</h2>
+    <p class="section-desc">A scalable AI-assisted outbound calling workflow that scales lead engagement and appointment booking in the sell-car journey — reducing calling cost by 70%.</p>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(event,'pm')">Product View</button>
+      <button class="tab-btn" onclick="switchTab(event,'tech')">System View</button>
+      <button class="tab-btn" onclick="switchTab(event,'metrics')">Metrics View</button>
+    </div>
+
+    <div id="tab-pm" class="tab-panel active">
+      <div class="two-col" style="margin-bottom:24px">
+        <div class="card">
+          <div class="card-title">The Problem</div>
+          <div class="card-sub" style="line-height:1.7;margin-top:8px">Users showed clear intent on CARS24 — they checked their car's price and viewed a quote — but dropped off before booking a free inspection. Manual outbound calling was expensive, inconsistent, and hard to scale. Most calls followed the same script: confirm interest, ask for a preferred slot, collect the address, and book the appointment.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Product Ownership</div>
+          <div class="ownership-list" style="margin-top:12px">
+            <div class="ownership-item">Problem framing</div>
+            <div class="ownership-item">PRD &amp; workflow</div>
+            <div class="ownership-item">Call lifecycle states</div>
+            <div class="ownership-item">Retry &amp; fallback rules</div>
+            <div class="ownership-item">Disposition design</div>
+            <div class="ownership-item">Dashboard requirements</div>
+            <div class="ownership-item">Edge-case mapping</div>
+            <div class="ownership-item">Cross-functional alignment</div>
+          </div>
+        </div>
+      </div>
+      <div class="quote-block">"The product challenge was not just adding AI to calls — it was designing a reliable workflow around real-world call uncertainty: no-answer, retries, call-later, low confidence, human fallback, incomplete address, and appointment confirmation."</div>
+    </div>
+
+    <div id="tab-tech" class="tab-panel">
+      <div class="arch-flow">
+        <div class="arch-box inhouse">Campaign Setup</div><div class="arch-arrow">→</div>
+        <div class="arch-box inhouse">Lead Created</div><div class="arch-arrow">→</div>
+        <div class="arch-box inhouse">Scheduler</div><div class="arch-arrow">→</div>
+        <div class="arch-box inhouse">Orchestrator</div><div class="arch-arrow">→</div>
+        <div class="arch-box external">Telephony</div><div class="arch-arrow">→</div>
+        <div class="arch-box external">AI Session (WS)</div><div class="arch-arrow">→</div>
+        <div class="arch-box external">STT</div><div class="arch-arrow">→</div>
+        <div class="arch-box external">LLM + Tools</div><div class="arch-arrow">→</div>
+        <div class="arch-box external">TTS</div><div class="arch-arrow">→</div>
+        <div class="arch-box inhouse">Disposition</div><div class="arch-arrow">→</div>
+        <div class="arch-box inhouse">Post-call Analytics</div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Built in-house</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div> Pluggable provider</div>
+      </div>
+      <div class="arch-split">
+        <div class="arch-half">
+          <div class="arch-half-title" style="color:var(--accent)">Built In-house</div>
+          <div class="arch-item">Campaign configuration UI</div>
+          <div class="arch-item">Lead lifecycle &amp; state management</div>
+          <div class="arch-item">Scheduler / trigger rules engine</div>
+          <div class="arch-item">Calling orchestrator service</div>
+          <div class="arch-item">Retry &amp; fallback logic</div>
+          <div class="arch-item">Appointment booking tools</div>
+          <div class="arch-item">Call state machine &amp; disposition engine</div>
+          <div class="arch-item">Post-call analytics dashboard</div>
+        </div>
+        <div class="arch-half">
+          <div class="arch-half-title" style="color:var(--accent3)">Pluggable Providers</div>
+          <div class="arch-item">Telephony — Exotel / Plivo / Twilio style</div>
+          <div class="arch-item">Speech-to-Text (STT)</div>
+          <div class="arch-item">LLM reasoning layer</div>
+          <div class="arch-item">Text-to-Speech / voice model (TTS)</div>
+          <div class="arch-item">AI agent provider (AIRO / ElevenLabs)</div>
+        </div>
+      </div>
+      <div class="quote-block">"The agent orchestration and product workflow were built in-house, while telephony, STT, LLM, and TTS providers were kept pluggable — avoiding vendor lock-in on cost and quality."</div>
+    </div>
+
+    <div id="tab-metrics" class="tab-panel">
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-card-val">2,400</div><div class="metric-card-label">Leads Queued</div><div class="metric-card-trend">Active campaign</div></div>
+        <div class="metric-card"><div class="metric-card-val">1,980</div><div class="metric-card-label">Calls Attempted</div><div class="metric-card-trend" style="color:var(--text2)">82.5% of queue</div></div>
+        <div class="metric-card"><div class="metric-card-val" style="color:var(--accent5)">61%</div><div class="metric-card-label">Connect Rate</div><div class="metric-card-trend" style="color:var(--accent5)">▲ +6pp vs manual</div></div>
+        <div class="metric-card"><div class="metric-card-val" style="color:var(--accent3)">38%</div><div class="metric-card-label">Appointment Booking Rate</div><div class="metric-card-trend">Target: 35%</div></div>
+        <div class="metric-card"><div class="metric-card-val" style="color:var(--accent2)">₹12</div><div class="metric-card-label">Cost Per Booking</div><div class="metric-card-trend" style="color:var(--accent2)">↓ 70% vs manual</div></div>
+        <div class="metric-card"><div class="metric-card-val" style="color:var(--accent4)">7%</div><div class="metric-card-label">Human Fallback Rate</div><div class="metric-card-trend" style="color:var(--accent4)">Target: &lt;10%</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:36px">
+      <div class="section-label" style="margin-bottom:8px">Interactive Demo</div>
+      <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px">Call Orchestrator Simulation</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:20px">Campaign: <span class="badge">Sell-Car Dropoff Recovery</span></div>
+      <button id="triggerCallBtn" onclick="runCallSim()">▶ Trigger Call</button>
+      <div class="sim-container">
+        <div class="sim-panel">
+          <div class="sim-title">Call State Machine</div>
+          <div class="state-list" id="stateList">
+            <div class="state-item"><div class="dot"></div>PENDING</div>
+            <div class="state-item"><div class="dot"></div>QUEUED</div>
+            <div class="state-item"><div class="dot"></div>CALL_INITIATED</div>
+            <div class="state-item"><div class="dot"></div>RINGING</div>
+            <div class="state-item"><div class="dot"></div>ANSWERED</div>
+            <div class="state-item"><div class="dot"></div>IN_CONVERSATION</div>
+            <div class="state-item"><div class="dot"></div>SLOT_SELECTED</div>
+            <div class="state-item"><div class="dot"></div>ADDRESS_COLLECTED</div>
+            <div class="state-item"><div class="dot"></div>APPOINTMENT_BOOKED</div>
+            <div class="state-item"><div class="dot"></div>DISPOSITION_DONE</div>
+          </div>
+          <div id="dispositionBadge" class="disposition-badge">✓ APPOINTMENT_BOOKED · Next: WhatsApp/SMS confirmation</div>
+        </div>
+        <div class="sim-panel">
+          <div class="sim-title">Live Transcript</div>
+          <div class="transcript-box" id="transcriptBox"><div style="color:var(--text3);font-size:12px;padding:8px 0">Trigger a call to see the conversation flow.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="variant" style="background:var(--bg2)">
+  <div class="container">
+    <div class="section-label">AI Product · CARS24</div>
+    <h2>AI Vehicle Variant Matching</h2>
+    <p class="section-desc">An OpenAI-powered fallback that resolves one internal CARS24 vehicle variant from ambiguous RC/VAHAN data when the data-science matching API returns multiple or no candidates.</p>
+    <div class="quote-block" style="margin-bottom:32px">"The model was constrained to choose only from a closed list of valid CARS24 variant IDs or return null, preventing hallucinated variant outputs."</div>
+    <div class="variant-demo">
+      <div>
+        <div class="vahan-card" style="margin-bottom:16px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-weight:700;margin-bottom:12px">VAHAN / RC Response</div>
+          <div class="data-row"><span class="data-key">make</span><span class="data-val">Maruti Suzuki</span></div>
+          <div class="data-row"><span class="data-key">rc_model</span><span class="data-val">CELERIO ZXI AMT</span></div>
+          <div class="data-row"><span class="data-key">fuel_type</span><span class="data-val">Petrol</span></div>
+          <div class="data-row"><span class="data-key">mfg_year</span><span class="data-val">03/2016</span></div>
+          <div class="data-row"><span class="data-key">engine_cc</span><span class="data-val">998.00</span></div>
+          <div class="data-row"><span class="data-key">transmission</span><span class="data-val">AMT (inferred)</span></div>
+        </div>
+        <div class="vahan-card">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent4);font-weight:700;margin-bottom:12px">DS Matcher — Multiple Candidates</div>
+          <div class="candidate-list" id="candidateList">
+            <div class="candidate-item">ZXI AMT [2014–2017] · ID 1</div>
+            <div class="candidate-item">ZXI AMT (O) [2014–2017] · ID 2</div>
+            <div class="candidate-item">VXI AMT [2013–2017] · ID 3</div>
+            <div class="candidate-item">ZXI [2014–2017] · ID 4</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="vahan-card">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-weight:700;margin-bottom:4px">AI Fallback Engine</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Constrained disambiguation — cannot invent variant IDs</div>
+          <button id="runFallbackBtn" onclick="runVariantSim()">⚡ Run AI Fallback</button>
+          <div class="rule-checks">
+            <div class="rule-item"><span class="check pending" id="r-year">○</span> Year range valid (reg 2016 → [2014–2017])</div>
+            <div class="rule-item"><span class="check pending" id="r-engine">○</span> Engine CC family match (998cc ≈ 1.0L)</div>
+            <div class="rule-item"><span class="check pending" id="r-trans">○</span> Transmission type (AMT → AMT only)</div>
+            <div class="rule-item"><span class="check pending" id="r-fuel">○</span> Fuel type match (Petrol → Petrol)</div>
+            <div class="rule-item"><span class="check pending" id="r-trim">○</span> Trim name match (ZXI, not VXI)</div>
+          </div>
+          <div class="result-box" id="variantResult">
+            <div style="display:flex;gap:24px;margin-bottom:12px">
+              <div><div class="r-label">Selected Variant</div><div class="r-val green-text">ZXI AMT [2014–2017]</div></div>
+              <div><div class="r-label">Variant ID</div><div class="r-val">1</div></div>
+            </div>
+            <div style="display:flex;gap:24px">
+              <div><div class="r-label">Method</div><div class="r-val blue-text">OpenAI Fallback</div></div>
+              <div><div class="r-label">Confidence</div><div class="r-val" style="color:var(--accent3)">High</div></div>
+            </div>
+          </div>
+          <div style="margin-top:20px">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-weight:700;margin-bottom:12px">Why this approach works</div>
+            <div class="ownership-list" style="grid-template-columns:1fr">
+              <div class="ownership-item">DS generates candidates; AI performs constrained disambiguation</div>
+              <div class="ownership-item">AI only picks from the closed enum list — never invents IDs</div>
+              <div class="ownership-item">Measurable: match rate tracked by day, model, and region</div>
+              <div class="ownership-item">Auditable: every decision logged with confidence &amp; attributes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="growth">
+  <div class="container">
+    <div class="section-label">Consumer Journey</div>
+    <h2>Consumer Growth Projects</h2>
+    <p class="section-desc">Improving user journeys, funnel conversion, and engagement through product changes backed by experimentation and data.</p>
+    <div class="project-grid">
+      <div class="project-card">
+        <span class="project-tag" style="background:var(--accent5-soft);color:var(--accent5)">CARS24 · Pricing Trust</span>
+        <div class="project-h">CarQuote Page Redesign</div>
+        <div class="project-desc">Users saw a quote range but lacked the confidence to proceed. The page was rebuilt to show recently sold similar cars alongside the user's quote, giving tangible market context and building trust.</div>
+        <div class="quote-card">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Estimated value of your car</div>
+          <div class="quote-range">₹3.4L – ₹3.8L</div>
+          <div class="quote-sub">Based on 847 recent sells in Delhi NCR</div>
+          <div class="sold-cars">
+            <span class="sold-car-chip">Celerio ZXI · 2016 · ₹3.5L</span>
+            <span class="sold-car-chip">Celerio VXI · 2015 · ₹3.2L</span>
+            <span class="sold-car-chip">Celerio ZXI · 2017 · ₹3.7L</span>
+          </div>
+          <a class="btn btn-primary" style="font-size:12px;padding:9px 16px">Book Free Inspection →</a>
+        </div>
+        <div class="project-impact" style="color:var(--accent5)">↑ +15% appointment booking rate</div>
+      </div>
+
+      <div class="project-card">
+        <span class="project-tag" style="background:var(--accent2-soft);color:var(--accent2)">CARS24 · Funnel Recovery</span>
+        <div class="project-h">Contextual Drop-off Nudges</div>
+        <div class="project-desc">Users who viewed their quote but didn't book received no guidance. Contextual card nudges were redesigned to surface the right message based on exactly where in the journey a user dropped off.</div>
+        <div class="journey-flow">
+          <div class="journey-step">Quote Seen</div><div class="journey-arrow">→</div>
+          <div class="journey-step" style="color:var(--accent4);border-color:var(--accent4)">Dropped Off</div><div class="journey-arrow">→</div>
+          <div class="journey-step highlight">Contextual Nudge</div><div class="journey-arrow">→</div>
+          <div class="journey-step" style="color:var(--accent3);border-color:var(--accent3)">Booked</div>
+        </div>
+        <div style="margin-top:14px;background:var(--bg2);border:1px solid var(--border2);border-radius:11px;padding:16px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Your quote expires soon</div>
+          <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px">You're ₹2,000 away from your best offer</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Book a free home inspection today — takes 45 mins.</div>
+          <a class="btn btn-primary" style="font-size:12px;padding:9px 16px">Claim Your Quote →</a>
+        </div>
+        <div class="project-impact" style="color:var(--accent2)">↑ +20% appointment booking rate</div>
+      </div>
+
+      <div class="project-card">
+        <span class="project-tag" style="background:var(--accent-soft);color:var(--accent)">Magicpin · Growth Analytics</span>
+        <div class="project-h">Bling Sale &amp; Conversion Funnel</div>
+        <div class="project-desc">Built Magicpin's first reliable conversion funnel and fraud-monitoring dashboard, then revamped the flagship Bling Sale with a dynamic discounting model that tied discounts to real-time demand — driving record transaction volume and earning an MVP award from the co-founder.</div>
+        <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
+          <div class="stat-pill"><div class="stat-pill-num" style="color:var(--accent)">+30%</div><div class="stat-pill-label">Transactions</div></div>
+          <div class="stat-pill"><div class="stat-pill-num" style="color:var(--accent3)">−15%</div><div class="stat-pill-label">Fraud activity</div></div>
+          <div class="stat-pill"><div class="stat-pill-num" style="color:var(--accent5)">🏆</div><div class="stat-pill-label">MVP Award</div></div>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <span class="project-tag" style="background:var(--accent3-soft);color:var(--accent3)">Bio Hackers · A/B Testing</span>
+        <div class="project-h">Feature Experimentation &amp; Growth</div>
+        <div class="project-desc">Conceptualized four new platform features and validated each through structured A/B tests. Separately developed an in-app advertisement strategy to onboard Food Darzee as an advertising client.</div>
+        <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
+          <div class="stat-pill"><div class="stat-pill-num" style="color:var(--accent5)">+35%</div><div class="stat-pill-label">User engagement</div></div>
+          <div class="stat-pill"><div class="stat-pill-num" style="color:var(--accent)">+30%</div><div class="stat-pill-label">Click-through rate</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience" style="background:var(--bg2)">
+  <div class="container">
+    <div class="section-label">Career</div>
+    <h2>Experience</h2>
+    <p class="section-desc">A track record spanning product management, consumer analytics, strategy consulting, and research — consistently translating data into decisions and outcomes.</p>
+    <div class="exp-list">
+
+      <div class="exp-card">
+        <div>
+          <div class="exp-meta-role">Associate Product Manager</div>
+          <div class="exp-meta-co">CARS24</div>
+          <div class="exp-meta-date">Sep 2025 – Present</div>
+        </div>
+        <ul class="exp-points">
+          <li>Designed a scalable <b>AI voice-calling platform</b> for outbound campaigns — enabling bot configuration, scheduled lead outreach, real-time call orchestration, and post-call analytics across multiple providers, reducing calling cost by <b>70%</b>.</li>
+          <li>Built an <b>OpenAI-powered fallback system</b> to resolve a single vehicle variant from ambiguous DS outputs using RC/VAHAN attributes (year, fuel, engine CC, transmission), improving variant resolution from <b>55% to 83%</b>.</li>
+          <li>Built a new <b>CarQuote page</b> and pricing system that reduced user confusion and increased trust by showing recently sold similar cars, leading to a <b>15% increase</b> in appointment bookings.</li>
+          <li>Redesigned <b>contextual drop-off nudges</b> that remind and guide users who leave the flow early, leading to a <b>20% increase</b> in appointment bookings.</li>
+        </ul>
+      </div>
+
+      <div class="exp-card">
+        <div>
+          <div class="exp-meta-role">Data Analyst Intern</div>
+          <div class="exp-meta-co">Bain &amp; Company</div>
+          <div class="exp-meta-date">Jan 2025 – Jul 2025</div>
+        </div>
+        <ul class="exp-points">
+          <li>Contributed to Bain's <b>2025 Insurgent Brands Report</b> by analyzing high-growth consumer brands and synthesizing market trends that supported key M&amp;A decisions in the US market.</li>
+          <li>Executed <b>market segmentation</b> for a leading Italian food manufacturer; developed a consumer decision tree to identify purchase drivers and streamlined distribution by shifting focus from low-performing SKUs to high-margin items via partition analysis.</li>
+          <li>Led a deep-dive on US <b>import dependency</b> across agri-inputs — mapping origin exposure and tariff tiers to flag high-risk supply chains, and modeling margin impacts across CPG archetypes to inform sourcing strategy.</li>
+        </ul>
+      </div>
+
+      <div class="exp-card">
+        <div>
+          <div class="exp-meta-role">Product Analyst Intern</div>
+          <div class="exp-meta-co">Magicpin</div>
+          <div class="exp-meta-date">Jul 2025 – Sep 2025</div>
+        </div>
+        <ul class="exp-points">
+          <li>Designed and implemented the company's <b>first reliable user conversion funnel</b> and fraud &amp; risk monitoring dashboard (replacing a broken/non-existent system), improving conversion efficiency and reducing fraudulent activity by <b>15%</b> — earning an <b>MVP award</b> from the co-founder.</li>
+          <li>Revamped Magicpin's flagship <b>Bling Sale</b> with a dynamic discounting model, driving record engagement and a <b>30% jump</b> in transactions.</li>
+        </ul>
+      </div>
+
+      <div class="exp-card">
+        <div>
+          <div class="exp-meta-role">Research Analyst Intern</div>
+          <div class="exp-meta-co">IIT Roorkee</div>
+          <div class="exp-meta-date">May 2024 – Jul 2024</div>
+        </div>
+        <ul class="exp-points">
+          <li>Performed comprehensive analyses of over <b>200 historical aircraft fire scenarios</b>, enabling data-driven recommendations that improved safety protocols.</li>
+          <li>Conducted certification trials for aircraft evacuation using advanced simulation software, proposing a solution that <b>reduced real-world testing costs by 40%</b>.</li>
+        </ul>
+      </div>
+
+      <div class="exp-card">
+        <div>
+          <div class="exp-meta-role">Product &amp; Growth Analyst Intern</div>
+          <div class="exp-meta-co">The Bio Hackers Company</div>
+          <div class="exp-meta-date">Mar 2023 – May 2023</div>
+        </div>
+        <ul class="exp-points">
+          <li>Increased overall user engagement by <b>35%</b> through A/B testing after conceptualizing and introducing four new platform features, and increased net click-through rate by <b>30%</b> through strategic analysis.</li>
+          <li>Developed the advertisement strategy to onboard <b>Food Darzee</b> as the platform's in-app advertisement client.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div style="margin-top:48px">
+      <div class="section-label">Leadership &amp; Involvement</div>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Team Vice President — Daedalus Racing, NSUT</h3>
+          <div class="award-item">Achieved <b>AIR 17</b> (83% YoY improvement) in BAJA SAE India 2024 by leading a 45-member team to design and build an AWD-ATV from scratch, managing a budget of ₹10+ lakhs.</div>
+          <div class="award-item">Secured partnerships with four businesses by pioneering the society's inaugural sponsorship brochure.</div>
+        </div>
+        <div class="info-card">
+          <h3>Project Lead — 180 Degrees Consulting, NSUT</h3>
+          <div class="award-item">Analyzed market parameters for a Goa-based beverage client and recommended 3+ potential expansion locations.</div>
+          <div class="award-item">Conducted market analysis of 10+ locations across Rajasthan and Jharkhand to identify potential markets for a Haryana-based agrochemical client.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="operating">
+  <div class="container">
+    <div class="section-label">How I Work</div>
+    <h2>Operating Model</h2>
+    <p class="section-desc">Every project follows a consistent framework — from discovery through launch and beyond.</p>
+    <div class="op-grid">
+      <div class="op-card"><div class="op-icon">🔍</div><div class="op-title">Problem Discovery</div><div class="op-desc">Funnel analysis, session review, and stakeholder interviews to find root causes</div></div>
+      <div class="op-card"><div class="op-icon">📐</div><div class="op-title">Funnel Analysis</div><div class="op-desc">SQL cohort and funnel analysis to quantify the problem and size the opportunity</div></div>
+      <div class="op-card"><div class="op-icon">📄</div><div class="op-title">PRD Writing</div><div class="op-desc">Structured PRDs with edge cases, API requirements, and acceptance criteria</div></div>
+      <div class="op-card"><div class="op-icon">⚠️</div><div class="op-title">Edge-case Mapping</div><div class="op-desc">For every happy path, 3–5 unhappy paths planned and handled</div></div>
+      <div class="op-card"><div class="op-icon">🤝</div><div class="op-title">Cross-functional Execution</div><div class="op-desc">Aligning engineering, DS, design, and business on scope and tradeoffs</div></div>
+      <div class="op-card"><div class="op-icon">🧪</div><div class="op-title">Experimentation</div><div class="op-desc">A/B test design, holdouts, and metric instrumentation before launch</div></div>
+      <div class="op-card"><div class="op-icon">📊</div><div class="op-title">Metric Tracking</div><div class="op-desc">North-star plus guardrail metrics, monitored and shared with leadership</div></div>
+      <div class="op-card"><div class="op-icon">🚀</div><div class="op-title">Launch Review</div><div class="op-desc">Retros, regression checks, and follow-up experiments queued by results</div></div>
+    </div>
+
+    <div style="margin-top:56px">
+      <div class="section-label">Toolkit</div>
+      <h2 style="margin-bottom:24px;font-size:28px">Skills &amp; Tools</h2>
+      <div class="skill-grid" style="margin-bottom:40px">
+        <span class="skill-chip">Product Management</span>
+        <span class="skill-chip">SQL · Snowflake</span>
+        <span class="skill-chip">Python</span>
+        <span class="skill-chip">Figma</span>
+        <span class="skill-chip">AI / LLM Product</span>
+        <span class="skill-chip">Power BI + DAX</span>
+        <span class="skill-chip">Google Analytics 4</span>
+        <span class="skill-chip">Excel</span>
+        <span class="skill-chip">Jira</span>
+        <span class="skill-chip">A/B Testing</span>
+        <span class="skill-chip">Funnel Analytics</span>
+        <span class="skill-chip">PRD Writing</span>
+        <span class="skill-chip">Tableau</span>
+        <span class="skill-chip">Alteryx</span>
+        <span class="skill-chip">SAS</span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Education</h3>
+          <div style="font-size:16px;font-weight:700;color:var(--ink);font-family:var(--font-display)">Netaji Subhas University of Technology</div>
+          <div style="font-size:13px;color:var(--text2);margin:6px 0">B.Tech in Mechanical Engineering · CGPA 8.3/10</div>
+          <div style="font-size:12px;color:var(--text3)">Aug 2021 – Jun 2025</div>
+        </div>
+        <div class="info-card">
+          <h3>Achievements &amp; Certifications</h3>
+          <div class="award-item"><b>CVSPK TIS 1 Scholarship</b> — Top 5% of Mechanical Department for four consecutive years.</div>
+          <div class="award-item">Topper in Business Courses; <b>Tableau, Excel, and Alteryx</b> certified.</div>
+          <div class="award-item">Finalist (Round 2) — Havoc Case Study by IIM Bangalore &amp; BrAIN Wars by Bain &amp; Company.</div>
+          <div class="award-item">Research offers from IIT Roorkee &amp; IIT Kharagpur Management Departments.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-name">Sudeep <span>Pandey</span></div>
+    <div class="footer-sub">Associate Product Manager — AI, D2C, Consumer Growth &amp; Product Analytics</div>
+    <div class="footer-contact">📞 9871597364 &nbsp;·&nbsp; ✉️ <a href="mailto:pandey.sudeep.02@gmail.com">pandey.sudeep.02@gmail.com</a></div>
+    <div class="footer-pills">
+      <span class="pill pill-blue">AI Product Workflows</span>
+      <span class="pill pill-green">Consumer Journey</span>
+      <span class="pill pill-purple">Data-backed Execution</span>
+      <span class="pill pill-orange">Funnel Conversion</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+
+function switchTab(e, tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  e.target.classList.add('active');
+}
+
+const callStates = ['PENDING','QUEUED','CALL_INITIATED','RINGING','ANSWERED','IN_CONVERSATION','SLOT_SELECTED','ADDRESS_COLLECTED','APPOINTMENT_BOOKED','DISPOSITION_DONE'];
+const transcriptLines = [
+  { who:'bot', msg:'Hi, you checked your car price on CARS24. Would you like to book a free inspection?', after:'IN_CONVERSATION' },
+  { who:'user', msg:'Yes, tomorrow evening would work.', after:'IN_CONVERSATION' },
+  { who:'bot', msg:'Great! We have 5 PM and 6 PM tomorrow. Which works better?', after:'IN_CONVERSATION' },
+  { who:'user', msg:'5 PM works for me.', after:'SLOT_SELECTED' },
+  { who:'bot', msg:'Noted — 5 PM tomorrow. Could you confirm your area or pincode?', after:'SLOT_SELECTED' },
+  { who:'user', msg:'Dwarka Sector 7.', after:'SLOT_SELECTED' },
+  { who:'bot', msg:'Thank you! Could you share your house number and a nearby landmark?', after:'ADDRESS_COLLECTED' },
+  { who:'user', msg:'House 21, near the main market.', after:'ADDRESS_COLLECTED' },
+  { who:'bot', msg:'Perfect — your inspection is confirmed for tomorrow at 5 PM, House 21, Dwarka Sector 7. You\'ll get an SMS and WhatsApp confirmation shortly.', after:'APPOINTMENT_BOOKED' },
+];
+
+async function runCallSim() {
+  const btn = document.getElementById('triggerCallBtn');
+  btn.disabled = true; btn.textContent = '⏳ Running…';
+  const items = document.querySelectorAll('#stateList .state-item');
+  const box = document.getElementById('transcriptBox');
+  const badge = document.getElementById('dispositionBadge');
+  items.forEach(s => s.classList.remove('active','done'));
+  box.innerHTML = ''; badge.classList.remove('show');
+  let ti = 0;
+  for (let i = 0; i < callStates.length; i++) {
+    if (i > 0) { items[i-1].classList.remove('active'); items[i-1].classList.add('done'); }
+    items[i].classList.add('active');
+    await sleep(600 + Math.random()*300);
+    while (ti < transcriptLines.length && callStates.indexOf(callStates[i]) >= callStates.indexOf(transcriptLines[ti].after)) {
+      addLine(box, transcriptLines[ti].who, transcriptLines[ti].msg); ti++;
+      await sleep(420);
+    }
+  }
+  items[items.length-1].classList.remove('active'); items[items.length-1].classList.add('done');
+  badge.classList.add('show');
+  btn.disabled = false; btn.textContent = '▶ Trigger Call Again';
+}
+function addLine(box, who, msg) {
+  const d = document.createElement('div');
+  d.className = 'transcript-line';
+  d.innerHTML = '<div class="who '+who+'">'+(who==='bot'?'🤖 Bot':'👤 User')+'</div><div class="msg">'+msg+'</div>';
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+}
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+async function runVariantSim() {
+  const btn = document.getElementById('runFallbackBtn');
+  btn.disabled = true; btn.textContent = '⏳ Analyzing…';
+  const rules = ['r-year','r-engine','r-trans','r-fuel','r-trim'];
+  const cands = document.querySelectorAll('#candidateList .candidate-item');
+  const result = document.getElementById('variantResult');
+  rules.forEach(r => { const el = document.getElementById(r); el.textContent='○'; el.className='check pending'; });
+  cands.forEach(c => c.classList.remove('selected','rejected'));
+  result.classList.remove('show');
+  for (let i=0;i<rules.length;i++){
+    await sleep(500);
+    const el = document.getElementById(rules[i]); el.textContent='✓'; el.className='check pass';
+  }
+  await sleep(400);
+  cands[1].classList.add('rejected'); cands[2].classList.add('rejected'); cands[3].classList.add('rejected');
+  await sleep(300); cands[0].classList.add('selected');
+  await sleep(400); result.classList.add('show');
+  btn.disabled = false; btn.textContent = '⚡ Run AI Fallback Again';
+}
+</script>
+</body>
+</html>
