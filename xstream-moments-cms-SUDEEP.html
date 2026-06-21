@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xstream Moments CMS</title>
+<style>
+/* ============================== TOKENS ============================== */
+:root{
+  --red:#E8000D; --red-600:#C2000B; --red-700:#9E0009; --red-50:#FDECEE; --red-100:#FBD9DC;
+  --bg:#F3F4F6; --panel:#FFFFFF; --panel-2:#FAFBFC;
+  --ink:#15171C; --ink-2:#3A3F47; --muted:#6A7180; --muted-2:#9AA1AD;
+  --line:#E6E8EC; --line-2:#EFF1F4;
+  --live:#1A8F5B; --live-bg:#E6F5EE;
+  --draft:#5B6472; --draft-bg:#EEF0F3;
+  --pending:#B27400; --pending-bg:#FBF0D9;
+  --approved:#1D6FE0; --approved-bg:#E7F0FD;
+  --scheduled:#7A45D6; --scheduled-bg:#F0E9FC;
+  --expired:#8A91A0; --expired-bg:#EFF1F4;
+  --rejected:#D23A3A; --rejected-bg:#FBE7E7;
+  --radius:12px; --radius-sm:9px;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 6px 16px rgba(16,24,40,.07);
+  --shadow-lg:0 12px 40px rgba(16,24,40,.18);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+svg{width:18px;height:18px;flex-shrink:0}
+.chip svg,.tag svg{width:13px;height:13px}
+.pack-cta svg{width:14px;height:14px}
+.tc-rank svg{width:13px;height:13px}
+.pv-status svg{width:11px;height:11px}
+.f-sec svg,.sc-link svg{width:13px;height:13px}
+.ri-sug svg{width:12px;height:12px}
+.kv dd svg{width:13px;height:13px}
+input,select,textarea{font-family:inherit;font-size:14px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#D5D9DF;border-radius:8px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#C2C7CF}
+
+/* ============================== LAYOUT ============================== */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:250px;flex:0 0 250px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.content{flex:1;overflow:auto;padding:26px 30px 60px}
+
+/* ============================== BRAND / SIDEBAR ============================== */
+.brand{display:flex;align-items:center;gap:11px;padding:18px 18px 16px;border-bottom:1px solid var(--line-2)}
+.brand .mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--red),#FF4D2E);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;box-shadow:0 4px 10px rgba(232,0,13,.28)}
+.brand .bt{font-weight:750;font-size:15px;letter-spacing:-.2px;line-height:1.1}
+.brand .bs{font-size:11px;color:var(--muted-2);font-weight:500}
+.nav{padding:10px 12px;overflow:auto;flex:1}
+.nav-label{font-size:10.5px;font-weight:700;letter-spacing:.7px;color:var(--muted-2);text-transform:uppercase;padding:14px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;color:var(--ink-2);font-weight:550;cursor:pointer;position:relative;margin-bottom:1px;user-select:none}
+.nav-item svg{width:18px;height:18px;flex:0 0 18px;color:var(--muted)}
+.nav-item:hover{background:var(--panel-2)}
+.nav-item.active{background:var(--red-50);color:var(--red-700)}
+.nav-item.active svg{color:var(--red)}
+.nav-item.active::before{content:"";position:absolute;left:-12px;top:7px;bottom:7px;width:3px;background:var(--red);border-radius:0 3px 3px 0}
+.nav-item .pill{margin-left:auto;background:var(--red);color:#fff;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:20px}
+.nav-item.active .pill{background:var(--red)}
+.nav-foot{padding:12px 14px;border-top:1px solid var(--line-2);font-size:11.5px;color:var(--muted-2)}
+.nav-foot b{color:var(--ink-2);font-weight:650}
+
+/* ============================== TOPBAR ============================== */
+.topbar{display:flex;align-items:center;gap:12px;padding:12px 22px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.search{flex:1;min-width:220px;max-width:430px;position:relative;display:flex;align-items:center}
+.search svg{position:absolute;left:12px;width:17px;height:17px;color:var(--muted-2)}
+.search input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);outline:none}
+.search input:focus{border-color:var(--red-100);background:#fff;box-shadow:0 0 0 3px var(--red-50)}
+.sel{position:relative}
+.sel select{appearance:none;-webkit-appearance:none;padding:8px 30px 8px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink-2);font-weight:550;outline:none;cursor:pointer}
+.sel select:focus{border-color:var(--red-100);box-shadow:0 0 0 3px var(--red-50)}
+.sel::after{content:"";position:absolute;right:11px;top:50%;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-65%) rotate(45deg);pointer-events:none}
+.role-sel select{background:var(--ink);color:#fff;border-color:var(--ink)}
+.role-sel::after{border-color:#fff}
+.tb-spacer{flex:1}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:600;font-size:13.5px;white-space:nowrap}
+.btn svg{width:16px;height:16px}
+.btn:hover{background:var(--panel-2)}
+.btn-primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn-primary:hover{background:var(--red-600)}
+.btn-dark{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn-dark:hover{background:#000}
+.btn-sm{padding:6px 10px;font-size:12.5px;border-radius:8px}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--panel-2)}
+.btn-danger{color:var(--rejected);border-color:var(--line)}
+.btn-danger:hover{background:var(--rejected-bg);border-color:var(--rejected-bg)}
+.btn-ok{color:var(--live);border-color:var(--line)}
+.btn-ok:hover{background:var(--live-bg)}
+.perm-bar{display:flex;align-items:center;gap:9px;padding:8px 22px;background:#FFFBF3;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--ink-2)}
+.perm-bar svg{width:15px;height:15px;color:var(--pending);flex:0 0 15px}
+.perm-bar b{color:var(--ink)}
+
+/* ============================== PAGE HEAD ============================== */
+.page-head{display:flex;align-items:flex-end;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+.page-title{font-size:22px;font-weight:760;letter-spacing:-.4px}
+.page-sub{color:var(--muted);font-size:13px;margin-top:3px}
+.page-head .right{margin-left:auto;display:flex;gap:9px;align-items:center}
+
+/* ============================== KPI ============================== */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow)}
+.kpi .k-top{display:flex;align-items:center;justify-content:space-between}
+.kpi .k-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--red-50);color:var(--red)}
+.kpi .k-ico svg{width:16px;height:16px}
+.kpi .k-val{font-size:25px;font-weight:780;letter-spacing:-.6px;margin-top:9px;line-height:1}
+.kpi .k-lab{color:var(--muted);font-size:12.5px;margin-top:5px}
+.kpi .k-delta{font-size:11.5px;font-weight:650;margin-top:7px;display:inline-flex;align-items:center;gap:3px}
+.k-up{color:var(--live)} .k-down{color:var(--rejected)} .k-flat{color:var(--muted)}
+
+/* ============================== CARDS / SECTIONS ============================== */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-head{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line-2)}
+.card-head .ct{font-weight:680;font-size:14.5px}
+.card-head .cs{color:var(--muted);font-size:12px}
+.card-head .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.card-body{padding:16px 18px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.section-gap{margin-bottom:18px}
+
+/* action required */
+.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.action-item{display:flex;gap:11px;align-items:flex-start;padding:13px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer}
+.action-item:hover{border-color:var(--red-100);background:var(--red-50)}
+.action-item .ai-ico{width:30px;height:30px;border-radius:8px;background:var(--pending-bg);color:var(--pending);display:flex;align-items:center;justify-content:center;flex:0 0 30px}
+.action-item .ai-ico svg{width:16px;height:16px}
+.action-item .ai-n{font-weight:730;font-size:16px;line-height:1}
+.action-item .ai-t{font-size:12.5px;color:var(--ink-2);margin-top:3px}
+.action-item .ai-go{margin-left:auto;color:var(--muted-2)}
+
+/* ============================== TABLES ============================== */
+.tbl-wrap{overflow:auto;border-radius:var(--radius)}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-weight:650;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--panel-2)}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:var(--panel-2)}
+.tbl .num{font-variant-numeric:tabular-nums;font-weight:600}
+.cell-title{font-weight:650;color:var(--ink)}
+.cell-sub{color:var(--muted);font-size:12px}
+.thumb{width:40px;height:54px;border-radius:6px;flex:0 0 40px;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+.thumb.wide{width:64px;height:40px;flex-basis:64px}
+.thumb .pl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.92)}
+.thumb .pl svg{width:15px;height:15px}
+.thumb .dur{position:absolute;right:2px;bottom:2px;background:rgba(0,0,0,.7);color:#fff;font-size:9px;padding:0 3px;border-radius:3px;font-weight:600}
+.cell-flex{display:flex;align-items:center;gap:11px}
+.cell-img{width:46px;height:30px;border-radius:6px;flex:0 0 46px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+
+/* ============================== BADGES / CHIPS ============================== */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:650;padding:3px 9px;border-radius:20px;white-space:nowrap;line-height:1.5}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9}
+.b-live{color:var(--live);background:var(--live-bg)}
+.b-draft{color:var(--draft);background:var(--draft-bg)}
+.b-pending{color:var(--pending);background:var(--pending-bg)}
+.b-approved{color:var(--approved);background:var(--approved-bg)}
+.b-scheduled{color:var(--scheduled);background:var(--scheduled-bg)}
+.b-expired{color:var(--expired);background:var(--expired-bg)}
+.b-rejected{color:var(--rejected);background:var(--rejected-bg)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:7px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-2)}
+.chip.soft{background:var(--red-50);border-color:var(--red-100);color:var(--red-700)}
+.chip.warn{background:var(--pending-bg);border-color:#F0E0BC;color:var(--pending)}
+.tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:#EEF1F6;color:#475063}
+.spoiler-0{color:var(--live);background:var(--live-bg)}
+.spoiler-1{color:var(--pending);background:var(--pending-bg)}
+.spoiler-2{color:var(--rejected);background:var(--rejected-bg)}
+
+/* ============================== PACK CARDS ============================== */
+.pack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pack-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.pack-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--red-100)}
+.poster{height:138px;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:13px;color:#fff}
+.poster::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.55))}
+.poster .p-badge{position:absolute;top:11px;left:11px;z-index:2}
+.poster .p-surface{position:absolute;top:11px;right:11px;z-index:2;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);color:#fff;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px}
+.poster .p-t{position:relative;z-index:2;font-weight:740;font-size:15.5px;letter-spacing:-.3px;line-height:1.2;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.poster .p-s{position:relative;z-index:2;font-size:12px;opacity:.92;margin-top:2px}
+.pack-body{padding:13px 14px}
+.pack-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px}
+.pack-cta{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2);margin-bottom:11px}
+.pack-cta .lab{font-weight:700;color:var(--red-700);background:var(--red-50);padding:2px 9px;border-radius:7px}
+.pack-stats{display:flex;gap:14px;border-top:1px solid var(--line-2);padding-top:11px}
+.pack-stats .ps .v{font-weight:740;font-size:15px}
+.pack-stats .ps .l{font-size:11px;color:var(--muted)}
+
+/* ============================== FORMS ============================== */
+.field{margin-bottom:14px}
+.field>label{display:block;font-weight:620;font-size:12.5px;color:var(--ink-2);margin-bottom:6px}
+.field .hint{color:var(--muted);font-weight:450;font-size:11.5px}
+.req{color:var(--red)}
+.inp,.field textarea,.field select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);outline:none}
+.field select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A7180' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px}
+.inp:focus,.field textarea:focus,.field select:focus{border-color:var(--red-100);box-shadow:0 0 0 3px var(--red-50)}
+.field textarea{resize:vertical;min-height:64px;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field-row.three{grid-template-columns:1fr 1fr 1fr}
+.cc{display:flex;justify-content:space-between;align-items:center;margin-top:5px}
+.cc small{color:var(--muted-2);font-size:11px}
+.help-note{display:flex;gap:9px;padding:10px 12px;background:#F4F8FF;border:1px solid #DBE8FF;border-radius:9px;font-size:12px;color:#2B4A78;margin-bottom:14px}
+.help-note svg{width:15px;height:15px;flex:0 0 15px;margin-top:1px;color:#3A6FCB}
+.warn-note{background:#FFF8EC;border-color:#F2E3BE;color:#7A5A12}
+.warn-note svg{color:var(--pending)}
+.check{display:flex;align-items:flex-start;gap:9px;padding:8px 0}
+.check input{margin-top:2px;width:16px;height:16px;accent-color:var(--red)}
+.check .ct{font-weight:580;font-size:13px}
+.check .cd{font-size:11.5px;color:var(--muted)}
+.seg{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:3px}
+.seg button{border:none;background:transparent;padding:6px 13px;border-radius:7px;font-weight:600;font-size:12.5px;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:var(--shadow)}
+
+/* ============================== MODAL / SHEET ============================== */
+.overlay{position:fixed;inset:0;background:rgba(20,23,28,.5);backdrop-filter:blur(2px);z-index:60;display:flex;opacity:0;pointer-events:none;transition:opacity .18s}
+.overlay.show{opacity:1;pointer-events:auto}
+.modal{margin:auto;background:var(--panel);border-radius:16px;box-shadow:var(--shadow-lg);width:min(94vw,560px);max-height:92vh;display:flex;flex-direction:column;transform:translateY(8px) scale(.99);transition:transform .18s}
+.overlay.show .modal{transform:none}
+.modal.lg{width:min(96vw,1060px)}
+.modal.md{width:min(95vw,760px)}
+.modal-head{display:flex;align-items:flex-start;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line-2)}
+.modal-head .mt{font-weight:720;font-size:17px;letter-spacing:-.2px}
+.modal-head .ms{color:var(--muted);font-size:12.5px;margin-top:2px}
+.modal-head .x{margin-left:auto;width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.modal-head .x:hover{background:var(--panel-2);color:var(--ink)}
+.modal-body{padding:20px 22px;overflow:auto}
+.modal-foot{display:flex;align-items:center;gap:10px;padding:14px 22px;border-top:1px solid var(--line-2);background:var(--panel-2);border-radius:0 0 16px 16px}
+.modal-foot .right{margin-left:auto;display:flex;gap:9px}
+/* right sheet */
+.sheet{margin:0 0 0 auto;height:100%;width:min(96vw,560px);background:var(--panel);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;transform:translateX(20px);transition:transform .2s}
+.overlay.show .sheet{transform:none}
+
+/* editor split layout */
+.editor-split{display:grid;grid-template-columns:1fr 360px;gap:0;overflow:hidden}
+.editor-main{overflow:auto;padding:0}
+.editor-preview{background:linear-gradient(180deg,#1A1C22,#0E0F13);overflow:auto;padding:22px 20px;border-left:1px solid #000}
+.ed-tabs{display:flex;gap:2px;padding:0 18px;border-bottom:1px solid var(--line-2);position:sticky;top:0;background:var(--panel);z-index:3;overflow:auto}
+.ed-tab{padding:13px 13px;font-weight:600;font-size:12.5px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.ed-tab.on{color:var(--red-700);border-bottom-color:var(--red)}
+.ed-pane{padding:18px}
+.ed-pane h4{margin:0 0 3px;font-size:14px}
+.ed-pane .ph-sub{color:var(--muted);font-size:12px;margin-bottom:15px}
+
+/* ============================== PHONE PREVIEW ============================== */
+.pv-label{color:#8C93A1;font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin:4px 0 12px;display:flex;align-items:center;gap:7px}
+.pv-label .seg{margin-left:auto}
+.pv-label .seg{background:#26282F;border-color:#33363F}
+.pv-label .seg button{color:#9AA1AD;font-size:11px;padding:4px 9px}
+.pv-label .seg button.on{background:#3A3D46;color:#fff;box-shadow:none}
+.phone{width:248px;margin:0 auto;background:#000;border-radius:30px;padding:9px;box-shadow:0 18px 50px rgba(0,0,0,.5);border:1px solid #2A2C33}
+.phone-scr{background:#0B0B0F;border-radius:23px;overflow:hidden;position:relative;height:466px}
+.phone-notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:78px;height:18px;background:#000;border-radius:12px;z-index:5}
+/* home rail preview */
+.pv-home{padding:40px 14px 14px;color:#fff;height:100%;overflow:auto}
+.pv-status{font-size:10px;color:#8C93A1;display:flex;justify-content:space-between;margin-bottom:14px}
+.pv-h-title{font-weight:700;font-size:14px;margin-bottom:3px}
+.pv-h-rail-lab{font-size:11px;color:#A7AEBC;margin:14px 0 8px;font-weight:600}
+.pv-card{border-radius:13px;overflow:hidden;position:relative;height:150px;display:flex;flex-direction:column;justify-content:flex-end;padding:13px}
+.pv-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.7))}
+.pv-card .c-badge{position:absolute;top:10px;left:10px;z-index:2;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.3px}
+.pv-card .c-t{position:relative;z-index:2;font-weight:750;font-size:15px;line-height:1.2;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.pv-card .c-s{position:relative;z-index:2;font-size:11px;opacity:.9;margin-top:3px}
+.pv-cta{position:relative;z-index:2;margin-top:10px;background:var(--red);color:#fff;font-weight:700;font-size:11.5px;text-align:center;padding:8px;border-radius:9px}
+.pv-thumbs{display:flex;gap:6px;margin-top:10px}
+.pv-thumbs div{flex:1;height:48px;border-radius:7px}
+/* clip feed preview */
+.pv-feed{height:100%;position:relative;color:#fff;padding:40px 14px 14px;display:flex;flex-direction:column;justify-content:flex-end}
+.pv-feed::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),transparent 35%,rgba(0,0,0,.75));z-index:1}
+.pv-feed .f-side{position:absolute;right:11px;bottom:120px;z-index:3;display:flex;flex-direction:column;gap:15px;align-items:center}
+.pv-feed .f-side .fb{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.16);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center}
+.pv-feed .f-side .fb svg{width:16px;height:16px}
+.pv-feed .f-side .fl{font-size:9px;text-align:center;margin-top:2px}
+.pv-feed .f-bot{position:relative;z-index:3}
+.pv-feed .f-spoiler{display:inline-block;font-size:9px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.25);padding:2px 7px;border-radius:6px;margin-bottom:8px}
+.pv-feed .f-cap{font-size:12px;line-height:1.4;margin-bottom:4px;max-width:175px}
+.pv-feed .f-meta{font-size:10px;color:#C7CCD6;margin-bottom:11px}
+.pv-feed .f-cta{background:var(--red);color:#fff;font-weight:700;font-size:12px;text-align:center;padding:10px;border-radius:10px}
+.pv-feed .f-sec{display:flex;gap:7px;margin-top:7px}
+.pv-feed .f-sec div{flex:1;text-align:center;font-size:10.5px;font-weight:600;padding:8px;border-radius:9px;background:rgba(255,255,255,.14);backdrop-filter:blur(4px)}
+/* smart decision card preview */
+.pv-sdc{padding:40px 14px 14px;color:#fff;height:100%}
+.sdc{background:linear-gradient(160deg,#1C1F27,#13151B);border:1px solid #2C2F38;border-radius:16px;padding:15px;margin-top:60px}
+.sdc .s-ey{font-size:10px;color:var(--red);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.sdc .s-h{font-weight:730;font-size:15px;margin:5px 0 12px;line-height:1.3}
+.sdc .s-row{display:flex;gap:9px;align-items:center;padding:7px 0;border-top:1px solid #262932}
+.sdc .s-row .st{width:34px;height:46px;border-radius:6px}
+.sdc .s-row .sn{font-weight:650;font-size:12px}
+.sdc .s-row .sm{font-size:10px;color:#9AA1AD}
+.sdc .s-btns{display:flex;gap:8px;margin-top:13px}
+.sdc .s-btns .b1{flex:1;background:var(--red);color:#fff;font-weight:700;font-size:11.5px;text-align:center;padding:9px;border-radius:9px}
+.sdc .s-btns .b2{flex:1;background:rgba(255,255,255,.1);color:#fff;font-weight:650;font-size:11.5px;text-align:center;padding:9px;border-radius:9px;border:1px solid #2C2F38}
+/* share card preview */
+.pv-share{padding:48px 16px;height:100%;background:radial-gradient(120% 80% at 50% 0,#26121A,#0B0B0F)}
+.share-card{background:#16171D;border:1px solid #2A2C33;border-radius:16px;overflow:hidden}
+.share-card .sc-img{height:150px;position:relative;display:flex;align-items:flex-end;padding:12px;color:#fff}
+.share-card .sc-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.7))}
+.share-card .sc-t{position:relative;z-index:2;font-weight:730;font-size:14px}
+.share-card .sc-b{padding:13px;color:#fff}
+.share-card .sc-msg{font-size:12px;color:#D4D8E0;line-height:1.4}
+.share-card .sc-link{display:flex;align-items:center;gap:7px;margin-top:11px;background:#202franchise;border-radius:9px}
+.share-card .sc-link{background:#202229;border:1px solid #2C2F38;border-radius:9px;padding:9px;font-size:10.5px;color:#9AA1AD;margin-top:11px;display:flex;align-items:center;gap:7px}
+.share-card .sc-brand{display:flex;align-items:center;gap:6px;font-size:10px;color:#9AA1AD;margin-top:11px}
+.share-card .sc-brand .m{width:16px;height:16px;border-radius:4px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff}
+
+/* ============================== UPLOAD WIZARD ============================== */
+.steps{display:flex;gap:0;padding:0 22px;border-bottom:1px solid var(--line-2)}
+.step{flex:1;padding:14px 4px;text-align:center;position:relative;color:var(--muted);font-weight:600;font-size:12px}
+.step .sn{width:24px;height:24px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;margin-right:7px;font-weight:700}
+.step.on{color:var(--ink)}
+.step.on .sn{background:var(--red);border-color:var(--red);color:#fff}
+.step.done .sn{background:var(--live);border-color:var(--live);color:#fff}
+.step.done{color:var(--ink-2)}
+.step::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:transparent}
+.step.on::after{background:var(--red)}
+.dropzone{border:2px dashed var(--line);border-radius:12px;padding:30px;text-align:center;background:var(--panel-2);cursor:pointer}
+.dropzone:hover{border-color:var(--red-100);background:var(--red-50)}
+.dropzone.filled{border-style:solid;border-color:var(--live);background:var(--live-bg)}
+.dropzone .dz-ico{width:44px;height:44px;border-radius:11px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin:0 auto 11px;color:var(--red)}
+.dropzone .dz-t{font-weight:650}
+.dropzone .dz-s{color:var(--muted);font-size:12px;margin-top:3px}
+
+/* quality bars */
+.qbars{display:flex;flex-direction:column;gap:9px}
+.qbar{display:grid;grid-template-columns:160px 1fr 42px;align-items:center;gap:10px}
+.qbar .ql{font-size:12.5px;color:var(--ink-2);font-weight:550}
+.qbar .qt{height:8px;background:var(--line-2);border-radius:6px;overflow:hidden}
+.qbar .qf{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--red),#FF6A4D)}
+.qbar .qv{font-weight:700;font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums}
+.score-ring{--p:0;width:96px;height:96px;border-radius:50%;background:conic-gradient(var(--red) calc(var(--p)*1%),var(--line-2) 0);display:flex;align-items:center;justify-content:center;position:relative}
+.score-ring::before{content:"";position:absolute;inset:9px;background:var(--panel);border-radius:50%}
+.score-ring .sv{position:relative;font-weight:800;font-size:24px}
+.score-ring .sv small{font-size:11px;color:var(--muted);font-weight:600}
+
+/* trend cards */
+.trend-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.trend-card{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--panel);box-shadow:var(--shadow)}
+.trend-card .tc-top{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.tc-spark{width:34px;height:34px;border-radius:9px;background:var(--red-50);color:var(--red);display:flex;align-items:center;justify-content:center;flex:0 0 34px}
+.tc-spark svg{width:18px;height:18px}
+.trend-card .tc-rank{font-size:11px;color:var(--live);font-weight:700;display:flex;align-items:center;gap:3px}
+.trend-row{display:flex;gap:7px;font-size:12.5px;padding:6px 0;border-top:1px solid var(--line-2)}
+.trend-row .tk{color:var(--muted);flex:0 0 130px}
+.trend-row .tv{font-weight:600;color:var(--ink-2)}
+.trend-acts{display:flex;gap:8px;margin-top:13px}
+
+/* review lanes */
+.lane{margin-bottom:16px}
+.lane-head{display:flex;align-items:center;gap:9px;font-weight:680;font-size:13.5px;margin-bottom:10px}
+.lane-head .lh-c{background:var(--ink);color:#fff;font-size:11px;font-weight:700;padding:1px 8px;border-radius:20px}
+.review-item{display:flex;gap:13px;align-items:center;padding:13px 15px;border:1px solid var(--line);border-radius:11px;background:var(--panel);margin-bottom:9px}
+.review-item .ri-pri{width:4px;align-self:stretch;border-radius:4px}
+.pri-high{background:var(--rejected)} .pri-med{background:var(--pending)} .pri-low{background:var(--muted-2)}
+.review-item .ri-main{flex:1;min-width:0}
+.review-item .ri-t{font-weight:650}
+.review-item .ri-issue{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.review-item .ri-sug{font-size:11.5px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:5px}
+.review-item .ri-sug svg{width:12px;height:12px;color:var(--approved)}
+.review-item .ri-meta{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.review-item .ri-acts{display:flex;gap:7px}
+.avatar{width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 24px}
+
+/* matrix */
+.matrix td .yes{color:var(--live);font-weight:700} .matrix td .no{color:var(--rejected);font-weight:700} .matrix td .part{color:var(--pending);font-weight:650;font-size:12px}
+
+/* variant rows */
+.variant{border:1px solid var(--line);border-radius:11px;padding:13px;margin-bottom:11px}
+.variant .v-head{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.variant .v-tag{width:24px;height:24px;border-radius:7px;background:var(--ink);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:12px}
+.variant.winner{border-color:var(--live);background:var(--live-bg)}
+.variant.winner .v-tag{background:var(--live)}
+.v-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.v-stat{background:var(--panel-2);border:1px solid var(--line-2);border-radius:8px;padding:7px 9px}
+.v-stat .vv{font-weight:750;font-size:14px;font-variant-numeric:tabular-nums}
+.v-stat .vl{font-size:10.5px;color:var(--muted)}
+
+/* guardrails */
+.guard{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:12.5px;border-bottom:1px solid var(--line-2)}
+.guard:last-child{border-bottom:none}
+.guard .g-ico{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 20px}
+.guard.pass .g-ico{background:var(--live-bg);color:var(--live)}
+.guard.fail .g-ico{background:var(--rejected-bg);color:var(--rejected)}
+.guard .g-ico svg{width:12px;height:12px}
+
+/* toast */
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:9px;align-items:center}
+.toast{background:var(--ink);color:#fff;padding:11px 16px;border-radius:11px;box-shadow:var(--shadow-lg);font-size:13px;font-weight:550;display:flex;align-items:center;gap:9px;animation:tin .25s;max-width:420px}
+.toast svg{width:16px;height:16px;flex:0 0 16px}
+.toast.ok svg{color:#4ADE80} .toast.warn svg{color:#FBBF24} .toast.info svg{color:#60A5FA}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* misc */
+.muted{color:var(--muted)} .b{font-weight:700} .mono{font-variant-numeric:tabular-nums}
+.divider{height:1px;background:var(--line-2);margin:16px 0}
+.row{display:flex;align-items:center;gap:10px} .wrap{flex-wrap:wrap}
+.spacer{flex:1}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty svg{width:38px;height:38px;color:var(--muted-2);margin-bottom:10px}
+.assign-row{display:flex;align-items:center;gap:11px;padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#fff}
+.assign-row .drag{color:var(--muted-2);cursor:grab}
+.assign-row .ar-main{flex:1;min-width:0}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:13px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:550;color:var(--ink-2)}
+@media (max-width:1180px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.pack-grid,.action-grid,.trend-grid{grid-template-columns:repeat(2,1fr)}.editor-split{grid-template-columns:1fr}.editor-preview{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">X</div>
+      <div>
+        <div class="bt">Moments CMS</div>
+        <div class="bs">Airtel Xstream Play</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="nav-foot">Signed in as <b id="footRole">Airtel Admin</b><br>Xstream Content Operations</div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-4.3-4.3"/><circle cx="11" cy="11" r="7"/></svg>
+        <input id="search" placeholder="Search packs, clips, titles, copy…" autocomplete="off">
+      </div>
+      <div class="sel"><select id="fPartner"><option>All Partners</option><option>Prime Video</option><option>SonyLIV</option><option>Zee5</option><option>SunNXT</option><option>Airtel Sports</option><option>Lionsgate Play</option></select></div>
+      <div class="sel"><select id="fLang"><option>All Languages</option><option>Hindi</option><option>English</option><option>Tamil</option><option>Telugu</option><option>Bengali</option><option>Marathi</option></select></div>
+      <div class="sel"><select id="fStatus"><option>All Status</option><option>Draft</option><option>Pending Review</option><option>Approved</option><option>Scheduled</option><option>Live</option><option>Expired</option><option>Rejected</option></select></div>
+      <div class="tb-spacer"></div>
+      <div class="sel role-sel"><select id="role" onchange="setRole(this.value)"><option>Airtel Admin</option><option>Partner Uploader</option><option>Content Ops</option><option>Legal Reviewer</option><option>Product Manager</option></select></div>
+      <button class="btn" onclick="openWizard()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Upload Clip</button>
+      <button class="btn btn-primary" onclick="openPackEditor(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>Create Moment Pack</button>
+    </div>
+    <div class="perm-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z"/></svg>
+      <span id="permNote"></span>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+<div id="modalRoot"></div>
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+/* =========================================================================
+   ICONS
+========================================================================= */
+const P={
+ dashboard:'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z',
+ packs:'M12 2 2 7l10 5 10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
+ clips:'M4 4h16v16H4zM4 9h16M9 4v5M15 4v5M4 14h16',
+ copy:'M5 7V5h14v2M10 19h4M12 5v14',
+ upload:'M12 16V4M7 9l5-5 5 5M5 20h14',
+ review:'M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
+ rights:'M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z',
+ trend:'M22 7l-8.5 8.5-4-4L2 19M16 7h6v6',
+ quality:'M12 2l3 7 7 .5-5.5 4.5 2 7L12 17l-6.5 4 2-7L2 9.5 9 9z',
+ reports:'M3 3v18h18M7 15v-4M12 15V8M17 15v-7',
+ settings:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 0 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z',
+ plus:'M12 5v14M5 12h14',clock:'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
+ alert:'M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z',
+ check:'M20 6 9 17l-5-5',right:'M9 18l6-6-6-6',left:'M15 18l-6-6 6-6',x:'M18 6 6 18M6 6l12 12',
+ play:'M8 5v14l11-7z',drag:'M9 5h.01M9 12h.01M9 19h.01M15 5h.01M15 12h.01M15 19h.01',
+ eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+ heart:'M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z',
+ share:'M4 12v8h16v-8M16 6l-4-4-4 4M12 2v14',info:'M12 16v-4M12 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
+ sparkle:'M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z',star:'M12 2l3 7 7 .5-5.5 4.5 2 7L12 17l-6.5 4 2-7L2 9.5 9 9z',
+ bell:'M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0',
+ film:'M4 4h16v16H4zM4 9h16M9 4v16M15 4v16',type:'M5 7V5h14v2M10 19h4M12 5v14',
+ image:'M3 3h18v18H3zM8.5 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M21 15l-5-5L5 21',
+ calendar:'M3 5h18v16H3zM3 9h18M8 3v4M16 3v4',target:'M12 12m-9 0a9 9 0 1 0 18 0 9 9 0 1 0-18 0M12 12m-5 0a5 5 0 1 0 10 0 5 5 0 1 0-10 0M12 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0',
+ lock:'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',tv:'M3 5h18v12H3zM8 21h8M12 17v4',
+ globe:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18',
+ mic:'M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3zM5 11a7 7 0 0 0 14 0M12 18v3',
+ wand:'M15 4V2M15 10V8M9 4H7M9 4h2M5 14l9-9 5 5-9 9zM3 21l4-4',
+ dup:'M8 8h12v12H8zM4 4h12v4M4 4v12h4',arch:'M3 5h18v4H3zM5 9h14v11H5zM10 13h4'
+};
+function ic(n,w){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(w||2)+'" stroke-linecap="round" stroke-linejoin="round"><path d="'+P[n]+'"/></svg>';}
+function icf(n){return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="'+P[n]+'"/></svg>';}
+
+/* =========================================================================
+   GRADIENTS (poster / thumbnail art)
+========================================================================= */
+const G={
+ mirzapur:'linear-gradient(135deg,#3a1c1c,#7a2e2e)',
+ panchayat:'linear-gradient(135deg,#3b5d2e,#7a9e44)',
+ cricket:'linear-gradient(135deg,#0a4d68,#088395)',
+ family:'linear-gradient(135deg,#1f2933,#3e4c59)',
+ tamil:'linear-gradient(135deg,#42275a,#734b6d)',
+ award:'linear-gradient(135deg,#6d4b1f,#b8893a)',
+ ai:'linear-gradient(135deg,#3a1c71,#d76d77)',
+ social:'linear-gradient(135deg,#0f2027,#2c5364)',
+ plan:'linear-gradient(135deg,#16222a,#3a6073)',
+ thriller:'linear-gradient(135deg,#232526,#414345)',
+ sun:'linear-gradient(135deg,#cb2d3e,#ef473a)',
+ sony:'linear-gradient(135deg,#0b3d91,#1d6fe0)',
+ zee:'linear-gradient(135deg,#5b2a86,#8e44ad)',
+ recap:'linear-gradient(135deg,#134e5e,#71b280)'
+};
+
+/* =========================================================================
+   DATA
+========================================================================= */
+const PACKS=[
+ {id:'p1',title:'Find your next watch in 5 clips',internal:'home_discovery_5clips',sub:'Quick scenes from titles you may like.',desc:'A short pack designed to help undecided users choose one movie or show quickly.',cta:'Find My Next Watch',intent:'Undecided browsing',lang:'English',genre:'Mixed',providers:'Prime Video, SonyLIV, Zee5',surface:'Home rail',status:'Live',clips:5,completion:'68%',ctr:'14.2%',watchlist:'9.1%',starts:'12,480',schedule:'Always on',art:G.thriller,style:'Stacked vertical cards'},
+ {id:'p2',title:'Catch up before Season 3',internal:'panchayat_s3_recap',sub:'Key moments before the new season drops.',desc:'Recap pack to re-engage lapsed viewers ahead of a season launch.',cta:'Catch Up Fast',intent:'Returning viewer',lang:'Hindi',genre:'Comedy Drama',providers:'Prime Video',surface:'Home + detail page',status:'Scheduled',clips:6,completion:'74%',ctr:'18.6%',watchlist:'11.4%',starts:'—',schedule:'24 Jun → 14 Jul',art:G.panchayat,style:'Recap card'},
+ {id:'p3',title:'Top cricket moments',internal:'sports_cricket_top',sub:'The overs everyone is talking about.',desc:'Match-day sports catch-up for cricket followers.',cta:'Watch Top Moments',intent:'Sports catch-up',lang:'English',genre:'Sports',providers:'Airtel Sports',surface:'Sports rail',status:'Live',clips:8,completion:'81%',ctr:'22.3%',watchlist:'6.7%',starts:'24,910',schedule:'Match-day recurring',art:G.cricket,style:'Sports moment'},
+ {id:'p4',title:'Included in your plan',internal:'entitlement_low_friction',sub:'No extra cost. Just press play.',desc:'Low-friction conversion pack surfacing titles already in the user’s entitlement.',cta:'Start Watching',intent:'Low-friction conversion',lang:'Multi',genre:'Mixed',providers:'SonyLIV, Zee5, Lionsgate Play',surface:'Home rail',status:'Draft',clips:4,completion:'—',ctr:'—',watchlist:'—',starts:'—',schedule:'Not scheduled',art:G.plan,style:'Collage',posterMissing:true},
+ {id:'p5',title:'Trending in Tamil thrillers',internal:'tamil_thriller_trending',sub:'Regional thrillers heating up this week.',desc:'Regional discovery pack for Tamil-preferring users.',cta:'Explore Moments',intent:'Regional discovery',lang:'Tamil',genre:'Thriller',providers:'SunNXT, Zee5',surface:'Home rail',status:'Pending Review',clips:5,completion:'—',ctr:'—',watchlist:'—',starts:'—',schedule:'01 Jul → 31 Jul',art:G.tamil,style:'Collage'},
+ {id:'p6',title:'Award-winning picks',internal:'awards_prestige',sub:'Critically loved films and series.',desc:'Prestige discovery pack to lift perceived catalogue quality.',cta:'Explore Moments',intent:'Quality discovery',lang:'English',genre:'Drama',providers:'Prime Video, Lionsgate Play',surface:'Home rail',status:'Live',clips:6,completion:'59%',ctr:'10.8%',watchlist:'13.2%',starts:'7,640',schedule:'Always on',art:G.award,style:'Single title'},
+ {id:'p7',title:'AI Voiceover Top 5 Picks',internal:'ai_montage_top5',sub:'A narrated montage tuned to your taste.',desc:'AI voiceover montage of five personalised picks. Requires human QA before launch.',cta:'Watch One Now',intent:'Personalised conversion',lang:'Hindi',genre:'Mixed',providers:'Prime Video, SonyLIV',surface:'AI Voiceover Montage',status:'Pending Review',clips:5,completion:'—',ctr:'—',watchlist:'—',starts:'—',schedule:'Pending QA',art:G.ai,style:'AI montage card'},
+ {id:'p8',title:'Socially trending now',internal:'social_trending',sub:'Clips blowing up across social.',desc:'Social-buzz discovery pack refreshed from Trend Radar signals.',cta:'Explore Moments',intent:'Social discovery',lang:'Multi',genre:'Mixed',providers:'Prime Video, SonyLIV, SunNXT',surface:'Home rail',status:'Scheduled',clips:7,completion:'—',ctr:'—',watchlist:'—',starts:'—',schedule:'28 Jun → 12 Jul',art:G.social,style:'Collage'}
+];
+
+const CLIPS=[
+ {id:'c1',title:'Final Over Thriller',parent:'India vs Australia Highlights',provider:'Airtel Sports',type:'Sports Moment',lang:'English',rating:'U',spoiler:0,cap:'Final over pressure changes the match.',cta:'Watch Full Highlights',rights:'In-app + share allowed',share:'Clip + deep link',pack:'Top cricket moments',status:'Live',q:88,dur:'0:42',ratio:'9:16',audio:'English',subs:'EN, HI',art:G.cricket,deeplink:'xstream://sports/ind-aus-hl',
+   qc:{Hook:92,Completion:84,'Watch Full':79,'Add to Watchlist':41,Share:73,Copy:80,CTA:86,'Poster CTR':70,Trust:90,Playback:95,Entitlement:88},
+   perf:{hold:'94%',comp:'81%',wf:'22.3%',wl:'6.7%',shr:'73%',cmp:'0.2%',buf:'1.1%',starts:'8,910'}},
+ {id:'c2',title:'Catch Up Before Season 3',parent:'Panchayat',provider:'Prime Video',type:'Season Recap',lang:'Hindi',rating:'U/A 13+',spoiler:1,cap:'Catch up on key moments before the new season.',cta:'Start Season 3',rights:'In-app only, title-card share',share:'Title card + deep link',pack:'Catch up before Season 3',status:'Pending Review',q:76,dur:'1:30',ratio:'9:16',audio:'Hindi',subs:'EN, HI',art:G.panchayat,deeplink:'xstream://title/panchayat',
+   qc:{Hook:74,Completion:78,'Watch Full':71,'Add to Watchlist':62,Share:55,Copy:72,CTA:80,'Poster CTR':66,Trust:84,Playback:90,Entitlement:79},
+   perf:{hold:'82%',comp:'74%',wf:'18.6%',wl:'11.4%',shr:'40%',cmp:'0.4%',buf:'2.0%',starts:'—'}},
+ {id:'c3',title:'Crime Thriller Opening Hook',parent:'Mirzapur',provider:'Prime Video',type:'Scene Clip',lang:'Hindi',rating:'A',spoiler:0,cap:'A gritty crime drama about power and revenge.',cta:'Watch Full Series',rights:'In-app only',share:'Not allowed',status:'Approved',pack:'Find your next watch in 5 clips',q:84,dur:'0:55',ratio:'9:16',audio:'Hindi',subs:'EN, HI',art:G.mirzapur,deeplink:'xstream://title/mirzapur',
+   qc:{Hook:90,Completion:80,'Watch Full':82,'Add to Watchlist':58,Share:30,Copy:85,CTA:84,'Poster CTR':77,Trust:88,Playback:92,Entitlement:90},
+   perf:{hold:'91%',comp:'79%',wf:'21.0%',wl:'8.4%',shr:'—',cmp:'0.3%',buf:'1.3%',starts:'5,210'}},
+ {id:'c4',title:'The Stakeout',parent:'The Family Man',provider:'Prime Video',type:'Scene Clip',lang:'Hindi',rating:'U/A 16+',spoiler:1,cap:'An ordinary man living an extraordinary double life.',cta:'Watch Full Series',rights:'In-app only',share:'Title card only',status:'Live',pack:'Find your next watch in 5 clips',q:81,dur:'1:02',ratio:'9:16',audio:'Hindi',subs:'EN, HI, TA',art:G.family,deeplink:'xstream://title/family-man',
+   qc:{Hook:85,Completion:77,'Watch Full':80,'Add to Watchlist':64,Share:48,Copy:79,CTA:82,'Poster CTR':72,Trust:86,Playback:88,Entitlement:84},
+   perf:{hold:'88%',comp:'76%',wf:'19.4%',wl:'10.2%',shr:'52%',cmp:'0.3%',buf:'1.6%',starts:'4,330'}},
+ {id:'c5',title:'Vikram Vedha — The Choice',parent:'Vikram Vedha',provider:'SunNXT',type:'Scene Clip',lang:'Tamil',rating:'U/A 16+',spoiler:0,cap:'A cop, a gangster, and a question of right and wrong.',cta:'Watch Full Movie',rights:'In-app + share allowed',share:'Clip + deep link',status:'Pending Review',pack:'Trending in Tamil thrillers',q:79,dur:'0:48',ratio:'9:16',audio:'Tamil',subs:'EN, TA, TE',art:G.tamil,deeplink:'xstream://title/vikram-vedha',
+   qc:{Hook:83,Completion:75,'Watch Full':74,'Add to Watchlist':55,Share:68,Copy:76,CTA:78,'Poster CTR':74,Trust:82,Playback:86,Entitlement:80},
+   perf:{hold:'86%',comp:'73%',wf:'16.9%',wl:'7.8%',shr:'64%',cmp:'0.5%',buf:'2.2%',starts:'—'}},
+ {id:'c6',title:'Maharani — Power Shift',parent:'Maharani',provider:'SonyLIV',type:'Scene Clip',lang:'Hindi',rating:'U/A 13+',spoiler:1,cap:'A reluctant leader rewrites the rules of power.',cta:'Start Episode',rights:'In-app only',share:'Title card only',status:'Approved',pack:'Award-winning picks',q:72,dur:'1:10',ratio:'9:16',audio:'Hindi',subs:'EN, HI',art:G.sony,deeplink:'xstream://title/maharani',
+   qc:{Hook:70,Completion:71,'Watch Full':68,'Add to Watchlist':60,Share:42,Copy:74,CTA:70,'Poster CTR':63,Trust:80,Playback:85,Entitlement:78},
+   perf:{hold:'78%',comp:'70%',wf:'12.1%',wl:'9.0%',shr:'38%',cmp:'0.4%',buf:'1.8%',starts:'2,980'}},
+ {id:'c7',title:'The Heist Goes Wrong',parent:'Jamtara',provider:'SonyLIV',type:'Scene Clip',lang:'Hindi',rating:'U/A 16+',spoiler:2,cap:'Small-town scammers, big-city trouble.',cta:'Watch Full Series',rights:'In-app only',share:'Not allowed',status:'Rejected',pack:'Unassigned',q:54,dur:'1:22',ratio:'9:16',audio:'Hindi',subs:'EN, HI',art:G.thriller,deeplink:'xstream://title/jamtara',
+   qc:{Hook:60,Completion:52,'Watch Full':48,'Add to Watchlist':40,Share:20,Copy:50,CTA:55,'Poster CTR':51,Trust:62,Playback:80,Entitlement:70},
+   perf:{hold:'64%',comp:'52%',wf:'7.4%',wl:'4.1%',shr:'—',cmp:'1.2%',buf:'2.6%',starts:'410'}},
+ {id:'c8',title:'Match-Winning Six',parent:'IPL Classics',provider:'Airtel Sports',type:'Sports Moment',lang:'Hindi',rating:'U',spoiler:0,cap:'The shot that sealed the title.',cta:'Watch Replay',rights:'In-app + share allowed',share:'Clip + deep link',status:'Live',pack:'Top cricket moments',q:86,dur:'0:30',ratio:'9:16',audio:'Hindi',subs:'EN, HI',art:G.cricket,deeplink:'xstream://sports/ipl-classics',
+   qc:{Hook:91,Completion:88,'Watch Full':70,'Add to Watchlist':38,Share:80,Copy:78,CTA:84,'Poster CTR':75,Trust:88,Playback:94,Entitlement:90},
+   perf:{hold:'93%',comp:'86%',wf:'17.8%',wl:'5.2%',shr:'80%',cmp:'0.2%',buf:'1.0%',starts:'6,720'}},
+ {id:'c9',title:'AI Montage — Tonight’s Picks',parent:'Multiple titles',provider:'Prime Video',type:'AI Montage Asset',lang:'Hindi',rating:'U/A 13+',spoiler:0,cap:'Five picks for tonight, narrated for you.',cta:'Watch One Now',rights:'In-app only',share:'Not allowed',status:'Pending Review',pack:'AI Voiceover Top 5 Picks',q:69,dur:'1:45',ratio:'9:16',audio:'AI Hindi (synthetic)',subs:'EN, HI',art:G.ai,deeplink:'xstream://montage/top5',
+   qc:{Hook:72,Completion:66,'Watch Full':64,'Add to Watchlist':70,Share:25,Copy:68,CTA:75,'Poster CTR':71,Trust:60,Playback:88,Entitlement:82},
+   perf:{hold:'74%',comp:'66%',wf:'15.2%',wl:'14.0%',shr:'—',cmp:'0.6%',buf:'1.9%',starts:'—'}},
+ {id:'c10',title:'Kantara — The Ritual',parent:'Kantara',provider:'Zee5',type:'Trailer Moment',lang:'Telugu',rating:'U/A 13+',spoiler:0,cap:'Folklore, faith, and a fight for the land.',cta:'Watch Full Movie',rights:'In-app + share allowed',share:'Clip + deep link',status:'Approved',pack:'Award-winning picks',q:83,dur:'0:52',ratio:'9:16',audio:'Telugu',subs:'EN, TE, TA',art:G.zee,deeplink:'xstream://title/kantara',
+   qc:{Hook:88,Completion:79,'Watch Full':76,'Add to Watchlist':66,Share:71,Copy:81,CTA:80,'Poster CTR':82,Trust:85,Playback:90,Entitlement:83},
+   perf:{hold:'90%',comp:'78%',wf:'18.0%',wl:'12.6%',shr:'69%',cmp:'0.3%',buf:'1.4%',starts:'5,940'}},
+ {id:'c11',title:'Suzhal — The Vortex Opens',parent:'Suzhal',provider:'Prime Video',type:'Scene Clip',lang:'Tamil',rating:'U/A 16+',spoiler:1,cap:'A missing girl unravels a town’s secrets.',cta:'Watch Full Series',rights:'In-app only',share:'Title card only',status:'Pending Review',pack:'Trending in Tamil thrillers',q:80,dur:'1:05',ratio:'9:16',audio:'Tamil',subs:'EN, TA',art:G.tamil,deeplink:'xstream://title/suzhal',
+   qc:{Hook:84,Completion:76,'Watch Full':78,'Add to Watchlist':61,Share:46,Copy:80,CTA:79,'Poster CTR':73,Trust:84,Playback:89,Entitlement:81},
+   perf:{hold:'87%',comp:'75%',wf:'17.1%',wl:'9.8%',shr:'44%',cmp:'0.4%',buf:'1.7%',starts:'—'}},
+ {id:'c12',title:'Included Tonight — Action Reel',parent:'Multiple titles',provider:'Lionsgate Play',type:'Scene Clip',lang:'English',rating:'A',spoiler:0,cap:'Already in your plan. Press play.',cta:'Start Watching',rights:'In-app only',share:'Not allowed',status:'Draft',pack:'Included in your plan',q:71,dur:'0:58',ratio:'9:16',audio:'English',subs:'EN',art:G.plan,deeplink:'xstream://collection/included',
+   qc:{Hook:73,Completion:69,'Watch Full':72,'Add to Watchlist':50,Share:22,Copy:70,CTA:76,'Poster CTR':60,Trust:82,Playback:86,Entitlement:92},
+   perf:{hold:'76%',comp:'68%',wf:'13.9%',wl:'6.0%',shr:'—',cmp:'0.3%',buf:'1.5%',starts:'—'}},
+ {id:'c13',title:'Recap: The Betrayal',parent:'Asur',provider:'SonyLIV',type:'Season Recap',lang:'Hindi',rating:'U/A 16+',spoiler:2,cap:'Everything you need before the finale.',cta:'Continue Series',rights:'In-app only',share:'Title card only',status:'Live',pack:'Find your next watch in 5 clips',q:78,dur:'1:38',ratio:'9:16',audio:'Hindi',subs:'EN, HI',art:G.recap,deeplink:'xstream://title/asur',
+   qc:{Hook:75,Completion:80,'Watch Full':74,'Add to Watchlist':68,Share:40,Copy:77,CTA:78,'Poster CTR':69,Trust:83,Playback:88,Entitlement:80},
+   perf:{hold:'81%',comp:'79%',wf:'16.2%',wl:'13.0%',shr:'37%',cmp:'0.5%',buf:'1.8%',starts:'3,510'}},
+ {id:'c14',title:'Goodbye Match — Farewell Over',parent:'Cricket Legends',provider:'Airtel Sports',type:'Sports Moment',lang:'English',rating:'U',spoiler:0,cap:'A legend’s last over, ball by ball.',cta:'Watch Highlights',rights:'In-app + share allowed',share:'Clip + deep link',status:'Live',pack:'Top cricket moments',q:85,dur:'0:39',ratio:'9:16',audio:'English',subs:'EN, HI',art:G.cricket,deeplink:'xstream://sports/legends',
+   qc:{Hook:89,Completion:85,'Watch Full':69,'Add to Watchlist':36,Share:78,Copy:79,CTA:83,'Poster CTR':76,Trust:87,Playback:93,Entitlement:89},
+   perf:{hold:'92%',comp:'84%',wf:'16.0%',wl:'4.9%',shr:'77%',cmp:'0.2%',buf:'1.1%',starts:'6,010'}}
+];
+
+const COPY=[
+ {id:'y1',type:'Moment Pack title',surface:'Home rail',text:'Find your next watch in 5 clips',lang:'English',status:'Live',owner:'Content Ops',edited:'2 days ago',perf:'14.2% CTR'},
+ {id:'y2',type:'Moment Pack CTA',surface:'Home pack',text:'Find My Next Watch',lang:'English',status:'Live',owner:'Content Ops',edited:'2 days ago',perf:'High'},
+ {id:'y3',type:'Clip caption',surface:'Clip feed',text:'A tense crime drama about power, revenge, and survival.',lang:'English',status:'Approved',owner:'Content Ops',edited:'5 days ago',perf:'Good'},
+ {id:'y4',type:'Best Way to Watch copy',surface:'Bottom sheet',text:'This title is available with a partner add-on.',lang:'English',status:'Pending Review',owner:'Legal Reviewer',edited:'1 day ago',perf:'—'},
+ {id:'y5',type:'AI voiceover script',surface:'AI Voiceover Montage',text:'Because you watch Hindi thrillers, this may be a strong pick for tonight.',lang:'Hindi',status:'Needs Review',owner:'Product Manager',edited:'4 hours ago',perf:'—'},
+ {id:'y6',type:'Moment Pack subtitle',surface:'Home rail',text:'Quick scenes from shows and movies you may like.',lang:'English',status:'Live',owner:'Content Ops',edited:'2 days ago',perf:'—'},
+ {id:'y7',type:'Smart Decision Card headline',surface:'Smart Decision Card',text:'You seem into crime thrillers. Start one now?',lang:'English',status:'Approved',owner:'Product Manager',edited:'3 days ago',perf:'21.0% CTR'},
+ {id:'y8',type:'Clip CTA',surface:'Clip feed',text:'Watch Full Series',lang:'English',status:'Live',owner:'Content Ops',edited:'2 days ago',perf:'High'},
+ {id:'y9',type:'Share message',surface:'Share card',text:'Caught this on Airtel Xstream — worth a watch.',lang:'English',status:'Approved',owner:'Content Ops',edited:'6 days ago',perf:'Good'},
+ {id:'y10',type:'Notification text',surface:'Push notification',text:'New cricket moments are live. Catch the top overs now.',lang:'Hindi',status:'Scheduled',owner:'Content Ops',edited:'1 day ago',perf:'—'},
+ {id:'y11',type:'Low-network message',surface:'Clip feed',text:'Showing a lighter preview to save data.',lang:'English',status:'Live',owner:'Content Ops',edited:'8 days ago',perf:'—'},
+ {id:'y12',type:'Clip caption',surface:'Clip feed',text:'Final over pressure changes the match.',lang:'English',status:'Live',owner:'Partner Uploader',edited:'1 day ago',perf:'Good'}
+];
+
+const REVIEWS=[
+ {id:'r1',lane:'Asset Review',item:'Included in your plan',type:'Moment Pack',issue:'Poster missing for Home rail preview.',sug:'Upload a 9:16 collage poster before scheduling.',owner:'PU',pri:'high'},
+ {id:'r2',lane:'CTA Review',item:'Trending in Tamil thrillers',type:'Moment Pack',issue:'CTA “Explore” is too vague for conversion.',sug:'Use “Explore Moments” or “Watch Tamil Thrillers”.',owner:'CO',pri:'med'},
+ {id:'r3',lane:'Safety Review',item:'Catch Up Before Season 3',type:'Clip',issue:'Caption may reveal a Season 2 spoiler.',sug:'Switch to spoiler-safe synopsis for Home surfaces.',owner:'CO',pri:'high'},
+ {id:'r4',lane:'Copy Review',item:'Best Way to Watch copy',type:'Copy',issue:'Share copy mentions a price that is not confirmed.',sug:'Remove price; reference “partner add-on” only.',owner:'LR',pri:'med'},
+ {id:'r5',lane:'Rights Review',item:'Vikram Vedha — The Choice',type:'Clip',issue:'Clip rights expire before campaign end (31 Jul).',sug:'Confirm extension with SunNXT or shorten window.',owner:'LR',pri:'high'},
+ {id:'r6',lane:'Asset Review',item:'Award-winning picks',type:'Moment Pack',issue:'Pack poster uses an unapproved actor still.',sug:'Replace with cleared key art from provider.',owner:'CO',pri:'med'},
+ {id:'r7',lane:'Copy Review',item:'AI Voiceover Top 5 Picks',type:'Copy',issue:'AI voiceover script requires human review.',sug:'Assign QA owner and confirm AI disclosure label.',owner:'PM',pri:'high'},
+ {id:'r8',lane:'Partner Approval',item:'Suzhal — The Vortex Opens',type:'Clip',issue:'Trend Radar candidate needs partner approval.',sug:'Send to Prime Video for clip + share sign-off.',owner:'PM',pri:'med'},
+ {id:'r9',lane:'Ready to Publish',item:'Catch up before Season 3',type:'Moment Pack',issue:'All checks passed. Scheduled for 24 Jun.',sug:'Confirm publish to Home + detail page.',owner:'CO',pri:'low'}
+];
+
+const RIGHTS=[
+ {prov:'Prime Video',title:'Mirzapur',clip:'yes',poster:'yes',recap:'part',share:'In-app only',cta:'yes',deeplink:'yes',tv:'yes',ai:'part',rating:'yes',expiry:'31 Dec 2026',ent:'Subscription'},
+ {prov:'Prime Video',title:'Panchayat',clip:'yes',poster:'yes',recap:'yes',share:'Title card only',cta:'yes',deeplink:'yes',tv:'yes',ai:'no',rating:'yes',expiry:'14 Aug 2026',ent:'Subscription'},
+ {prov:'Airtel Sports',title:'IND v AUS Highlights',clip:'yes',poster:'yes',recap:'yes',share:'Clip + link',cta:'yes',deeplink:'yes',tv:'yes',ai:'yes',rating:'yes',expiry:'30 Sep 2026',ent:'Included'},
+ {prov:'SunNXT',title:'Vikram Vedha',clip:'yes',poster:'no',recap:'part',share:'Clip + link',cta:'yes',deeplink:'yes',tv:'no',ai:'no',rating:'yes',expiry:'15 Jul 2026',ent:'Add-on'},
+ {prov:'SonyLIV',title:'Maharani',clip:'yes',poster:'yes',recap:'yes',share:'Title card only',cta:'yes',deeplink:'yes',tv:'yes',ai:'part',rating:'yes',expiry:'31 Oct 2026',ent:'Subscription'},
+ {prov:'Zee5',title:'Kantara',clip:'yes',poster:'yes',recap:'no',share:'Clip + link',cta:'yes',deeplink:'yes',tv:'yes',ai:'yes',rating:'yes',expiry:'20 Nov 2026',ent:'Subscription'},
+ {prov:'Lionsgate Play',title:'Catalogue (bundle)',clip:'yes',poster:'part',recap:'no',share:'Not allowed',cta:'yes',deeplink:'yes',tv:'yes',ai:'no',rating:'part',expiry:'31 Jan 2027',ent:'Add-on'}
+];
+
+const TRENDS=[
+ {id:'t1',signal:'Kantara',type:'Trending title',rank:'+312% searches',detail:'Spike in Telugu & Kannada belts after award buzz.',pack:'Award-winning picks (regional cut)',poster:'Folk-ritual key art, warm earth tones',cta:'Watch Full Movie',cleared:'Yes — Zee5 clip + share cleared',approval:'Pack edit only'},
+ {id:'t2',signal:'“All is well” dialogue',type:'Trending dialogue',rank:'+180% social',detail:'Meme audio resurging across Reels & Shorts.',pack:'Socially trending now',poster:'Bold quote-card with title still',cta:'Explore Moments',cleared:'Partial — needs title-card share check',approval:'Partner approval needed'},
+ {id:'t3',signal:'India vs Australia',type:'Trending sports moment',rank:'+540% views',detail:'Final-over clip driving sports-rail demand today.',pack:'Top cricket moments',poster:'Stadium night shot, score overlay',cta:'Watch Top Moments',cleared:'Yes — Airtel Sports owned',approval:'Auto-eligible (rights cleared)'},
+ {id:'t4',signal:'Tamil thriller wave',type:'Trending genre',rank:'+95% completion',detail:'Tamil thrillers over-indexing on 3s hold this week.',pack:'Trending in Tamil thrillers',poster:'Noir collage, high contrast',cta:'Explore Moments',cleared:'Partial — SunNXT poster use restricted',approval:'Partner approval needed'},
+ {id:'t5',signal:'Suzhal Season 2',type:'Trending franchise',rank:'+210% watchlist',detail:'Season 2 announcement lifting back-catalogue interest.',pack:'Catch up before Season 2',poster:'Vortex motif, single-title focus',cta:'Catch Up Fast',cleared:'Yes — Prime Video recap cleared',approval:'Pack edit only'},
+ {id:'t6',signal:'Award season',type:'Trending event',rank:'+140% browse',detail:'Awards week driving prestige-content discovery.',pack:'Award-winning picks',poster:'Trophy-gold accent, laurel motif',cta:'Explore Moments',cleared:'Yes — multi-provider cleared',approval:'Pack edit only'}
+];
+
+const CTA_OPTIONS=['Explore Moments','Find My Next Watch','Catch Up Fast','Watch Top Moments','Start Watching','Continue Series','Watch Full','Watch Full Series','Watch Full Movie','Watch Full Highlights','Start Episode','Start Season 3','Watch Highlights','Watch Live','Watch Replay','Add to Watchlist','Unlock & Watch','Watch One Now','+ Custom CTA…'];
+
+const ROLE_NOTES={
+ 'Airtel Admin':'Full access. Can create, edit, approve, schedule, publish, and manage rights across all partners.',
+ 'Partner Uploader':'Can upload clips, edit metadata and copy drafts, and submit for review. Cannot approve or publish.',
+ 'Content Ops':'Can build Moment Packs, assign clips, edit copy, and schedule. Cannot approve rights or legal items.',
+ 'Legal Reviewer':'Can approve rights, ratings, share behavior, and expiry. Cannot edit creative or publish.',
+ 'Product Manager':'Can view performance, prioritise Trend Radar, and approve packs for launch.'
+};
+
+const NAV=[
+ ['dashboard','Dashboard','dashboard'],['packs','Moment Packs','packs'],['clips','Clips Library','clips'],
+ ['copy','Copy & CTAs','copy'],['upload','Upload Clip','upload'],['review','Review Queue','review','7'],
+ ['rights','Rights & Entitlements','rights'],['trend','Trend Radar','trend','6'],['quality','Clip Quality','quality'],
+ ['reports','Reports','reports'],['settings','Settings','settings']
+];
+
+/* =========================================================================
+   STATE + HELPERS
+========================================================================= */
+const state={section:'dashboard',role:'Airtel Admin',q:'',partner:'All Partners',lang:'All Languages',status:'All Status',reviewStatus:{}};
+const $=s=>document.querySelector(s);
+const statusClass=s=>({'Live':'b-live','Draft':'b-draft','Pending Review':'b-pending','Pending Legal':'b-pending','Needs Review':'b-pending','Approved':'b-approved','Scheduled':'b-scheduled','Expired':'b-expired','Rejected':'b-rejected'}[s]||'b-draft');
+const badge=s=>`<span class="badge ${statusClass(s)}">${s}</span>`;
+const spoilerLabel=l=>['No spoiler','Mild spoiler','Major spoiler'][l];
+const spoilerBadge=l=>`<span class="badge spoiler-${l}" style="background:var(--${l===0?'live':l===1?'pending':'rejected'}-bg)">${spoilerLabel(l)}</span>`;
+function poster(art,extra){return `<div class="thumb" style="background:${art}"><div class="pl">${icf('play')}</div>${extra||''}</div>`;}
+function img(art){return `<div class="cell-img" style="background:${art}"></div>`;}
+
+function matchFilters(o){
+ if(state.partner!=='All Partners' && (o.provider||o.providers||'').indexOf(state.partner)<0) return false;
+ if(state.lang!=='All Languages' && (o.lang||'')!==state.lang && (o.lang||'')!=='Multi') return false;
+ if(state.status!=='All Status' && (o.status||'')!==state.status) return false;
+ if(state.q){const t=(JSON.stringify(o)).toLowerCase();if(t.indexOf(state.q.toLowerCase())<0) return false;}
+ return true;
+}
+
+/* =========================================================================
+   NAV + SHELL
+========================================================================= */
+function renderNav(){
+ $('#nav').innerHTML='<div class="nav-label">Operations</div>'+NAV.map(n=>
+  `<div class="nav-item ${state.section===n[0]?'active':''}" onclick="navigate('${n[0]}')">${ic(n[2])}<span>${n[1]}</span>${n[3]?`<span class="pill">${n[3]}</span>`:''}</div>`
+ ).join('');
+}
+function navigate(s){state.section=s;renderNav();render();$('#content').scrollTop=0;}
+function setRole(r){state.role=r;$('#permNote').innerHTML=`<b>Role: ${r}</b> — ${ROLE_NOTES[r]}`;$('#footRole').textContent=r;toast('Switched role to '+r,'info');}
+
+function render(){
+ const c=$('#content');
+ ({dashboard:renderDashboard,packs:renderPacks,clips:renderClips,copy:renderCopy,upload:renderUpload,
+   review:renderReview,rights:renderRights,trend:renderTrend,quality:renderQuality,reports:renderReports,settings:renderSettings}[state.section]||renderDashboard)(c);
+}
+
+/* =========================================================================
+   DASHBOARD
+========================================================================= */
+function renderDashboard(c){
+ const kpis=[
+  ['packs','7','Live Moment Packs','+2 this week','up'],['copy','12','Draft Moment Packs','3 missing poster','flat'],
+  ['clips','148','Clips Uploaded','+19 this week','up'],['review','7','Pending Review','2 high priority','down'],
+  ['clock','4','Expiring Soon','within 7 days','down'],['rights','3','Rights-blocked Shares','needs legal','flat'],
+  ['quality','79','Avg Clip Quality Score','+4 pts','up'],['trend','38.2k','Clip-assisted Starts','+12.6%','up']
+ ];
+ const actions=[
+  ['12','Moment Packs missing poster','packs'],['8','clips missing content rating','clips'],['6','clips missing CTA label','clips'],
+  ['4','clips expiring this week','rights'],['3','Trend Radar candidates awaiting approval','trend'],['5','copy variants pending review','copy']
+ ];
+ const topPacks=PACKS.filter(p=>p.status==='Live').concat(PACKS.filter(p=>p.completion!=='—')).filter((v,i,a)=>a.indexOf(v)===i).slice(0,5);
+ const topClips=[...CLIPS].sort((a,b)=>b.q-a.q).slice(0,5);
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Dashboard</div><div class="page-sub">Operational health across Moment Packs, clips, copy, rights, and performance.</div></div>
+   <div class="right"><div class="chip">${ic('calendar')} Last 7 days</div><button class="btn btn-primary btn-sm" onclick="openPackEditor(null)">${ic('plus')} Create Moment Pack</button></div></div>
+ <div class="kpi-grid">${kpis.map(k=>`
+  <div class="kpi"><div class="k-top"><div class="k-ico">${ic(k[0])}</div><span class="k-delta k-${k[4]}">${k[3]}</span></div>
+   <div class="k-val">${k[1]}</div><div class="k-lab">${k[2]}</div></div>`).join('')}</div>
+
+ <div class="card section-gap"><div class="card-head"><span class="ct">Action Required</span><span class="cs">Items that block scheduling or publishing</span></div>
+  <div class="card-body"><div class="action-grid">${actions.map(a=>`
+   <div class="action-item" onclick="navigate('${a[2]}')"><div class="ai-ico">${ic('alert')}</div>
+    <div><div class="ai-n">${a[0]}</div><div class="ai-t">${a[1]}</div></div><div class="ai-go">${ic('right')}</div></div>`).join('')}</div></div></div>
+
+ <div class="card section-gap"><div class="card-head"><span class="ct">Top Performing Moment Packs</span><div class="right"><button class="btn btn-sm btn-ghost" onclick="navigate('packs')">View all ${ic('right')}</button></div></div>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Pack</th><th>Surface</th><th>Language</th><th>CTA</th><th>Completion</th><th>Watch Full CTR</th><th>Add to WL</th><th>Assisted Starts</th><th>Status</th></tr></thead><tbody>
+  ${topPacks.map(p=>`<tr onclick="openPackEditor('${p.id}')"><td><div class="cell-flex">${img(p.art)}<div><div class="cell-title">${p.title}</div><div class="cell-sub">${p.providers}</div></div></div></td>
+   <td>${p.surface}</td><td>${p.lang}</td><td><span class="chip soft">${p.cta}</span></td><td class="num">${p.completion}</td><td class="num">${p.ctr}</td><td class="num">${p.watchlist}</td><td class="num">${p.starts}</td><td>${badge(p.status)}</td></tr>`).join('')}
+  </tbody></table></div></div>
+
+ <div class="card"><div class="card-head"><span class="ct">Top Performing Clips</span><div class="right"><button class="btn btn-sm btn-ghost" onclick="navigate('clips')">View all ${ic('right')}</button></div></div>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Clip</th><th>Parent Title</th><th>Provider</th><th>Assigned Pack</th><th>Quality</th><th>Watch Full CTR</th><th>Add to WL</th><th>Share</th><th>Status</th></tr></thead><tbody>
+  ${topClips.map(cl=>`<tr onclick="openClipDetail('${cl.id}')"><td><div class="cell-flex">${poster(cl.art,`<div class="dur">${cl.dur}</div>`)}<div><div class="cell-title">${cl.title}</div><div class="cell-sub">${cl.type}</div></div></div></td>
+   <td>${cl.parent}</td><td>${cl.provider}</td><td>${cl.pack}</td><td><span class="chip ${cl.q>=80?'soft':''}">${cl.q}</span></td><td class="num">${cl.perf.wf}</td><td class="num">${cl.perf.wl}</td><td class="num">${cl.perf.shr}</td><td>${badge(cl.status)}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+}
+
+/* =========================================================================
+   MOMENT PACKS
+========================================================================= */
+function renderPacks(c){
+ const list=PACKS.filter(matchFilters);
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Moment Packs</div><div class="page-sub">${list.length} packs · entry cards that open into the vertical clip feed.</div></div>
+  <div class="right"><div class="seg"><button class="on" onclick="setPackView('grid',this)">Cards</button><button onclick="setPackView('table',this)">Table</button></div>
+   <button class="btn btn-primary btn-sm" onclick="openPackEditor(null)">${ic('plus')} Create Pack</button></div></div>
+ <div id="packView"></div>`;
+ packGrid(list);
+}
+function setPackView(v,btn){document.querySelectorAll('.page-head .seg button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');const list=PACKS.filter(matchFilters);v==='grid'?packGrid(list):packTable(list);}
+function packGrid(list){
+ $('#packView').innerHTML='<div class="pack-grid">'+list.map(p=>`
+  <div class="pack-card" onclick="openPackEditor('${p.id}')">
+   <div class="poster" style="background:${p.art}">
+     ${p.posterMissing?'<span class="p-badge"><span class="badge b-pending" style="background:rgba(178,116,0,.92);color:#fff">Poster missing</span></span>':`<span class="p-badge">${badge(p.status)}</span>`}
+     <span class="p-surface">${p.surface}</span>
+     <div class="p-t">${p.title}</div><div class="p-s">${p.sub}</div></div>
+   <div class="pack-body">
+    <div class="pack-meta"><span class="tag">${p.lang}</span><span class="tag">${p.genre}</span><span class="tag">${p.clips} clips</span></div>
+    <div class="pack-cta">${ic('target',1.8)} <span class="muted">${p.intent}</span></div>
+    <div class="pack-cta"><span class="lab">${p.cta}</span><span class="muted" style="margin-left:auto">${p.schedule}</span></div>
+    <div class="pack-stats"><div class="ps"><div class="v">${p.completion}</div><div class="l">Completion</div></div>
+     <div class="ps"><div class="v">${p.ctr}</div><div class="l">Watch Full CTR</div></div>
+     <div class="ps"><div class="v">${p.starts}</div><div class="l">Assisted starts</div></div></div>
+   </div></div>`).join('')+'</div>';
+}
+function packTable(list){
+ $('#packView').innerHTML=`<div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Pack</th><th>CTA</th><th>Intent</th><th>Language</th><th>Surface</th><th>Clips</th><th>Schedule</th><th>Completion</th><th>Status</th></tr></thead><tbody>
+  ${list.map(p=>`<tr onclick="openPackEditor('${p.id}')"><td><div class="cell-flex">${img(p.art)}<div><div class="cell-title">${p.title}</div><div class="cell-sub">${p.sub}</div></div></div></td>
+   <td><span class="chip soft">${p.cta}</span></td><td>${p.intent}</td><td>${p.lang}</td><td>${p.surface}</td><td class="num">${p.clips}</td><td class="cell-sub">${p.schedule}</td><td class="num">${p.completion}</td><td>${badge(p.status)}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+}
+
+/* =========================================================================
+   CLIPS LIBRARY
+========================================================================= */
+function renderClips(c){
+ const list=CLIPS.filter(matchFilters);
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Clips Library</div><div class="page-sub">${list.length} clips · the short video assets used inside Moment Packs.</div></div>
+  <div class="right"><button class="btn btn-sm" onclick="openWizard()">${ic('upload')} Upload Clip</button></div></div>
+ <div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr>
+   <th>Clip</th><th>Parent / Provider</th><th>Type</th><th>Lang</th><th>Rating</th><th>Spoiler</th><th>CTA</th><th>Rights</th><th>Assigned Pack</th><th>Quality</th><th>Status</th></tr></thead><tbody>
+  ${list.map(cl=>`<tr onclick="openClipDetail('${cl.id}')">
+   <td><div class="cell-flex">${poster(cl.art,`<div class="dur">${cl.dur}</div>`)}<div><div class="cell-title">${cl.title}</div><div class="cell-sub">${cl.cap.length>34?cl.cap.slice(0,34)+'…':cl.cap}</div></div></div></td>
+   <td><div class="cell-title" style="font-weight:600">${cl.parent}</div><div class="cell-sub">${cl.provider}</div></td>
+   <td><span class="tag">${cl.type}</span></td><td>${cl.lang}</td><td><span class="tag">${cl.rating}</span></td><td>${spoilerBadge(cl.spoiler)}</td>
+   <td><span class="chip soft">${cl.cta}</span></td><td class="cell-sub">${cl.rights}</td><td>${cl.pack==='Unassigned'?'<span class="muted">—</span>':cl.pack}</td>
+   <td><span class="chip ${cl.q>=80?'soft':cl.q<60?'warn':''}">${cl.q}</span></td><td>${badge(cl.status)}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+}
+
+/* =========================================================================
+   COPY & CTAs
+========================================================================= */
+function renderCopy(c){
+ const list=COPY.filter(o=>{if(state.lang!=='All Languages'&&o.lang!==state.lang)return false;if(state.q){return JSON.stringify(o).toLowerCase().includes(state.q.toLowerCase())}return true;});
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Copy &amp; CTAs</div><div class="page-sub">Every text string used across Moments surfaces — managed as a first-class object.</div></div>
+  <div class="right"><button class="btn btn-sm btn-ghost">${ic('globe')} Localize</button><button class="btn btn-primary btn-sm" onclick="openCopyEditor(null)">${ic('plus')} New Copy</button></div></div>
+ <div class="card"><div class="card-head"><span class="ct">All Copy</span><span class="cs">${list.length} strings</span>
+   <div class="right"><span class="chip">${ic('type')} 12 types</span><span class="chip">${ic('globe')} 6 languages</span></div></div>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Copy Type</th><th>Current Copy</th><th>Surface</th><th>Lang</th><th>Owner</th><th>Last Edited</th><th>Performance</th><th>Status</th></tr></thead><tbody>
+  ${list.map(o=>`<tr onclick="openCopyEditor('${o.id}')"><td><div class="cell-title">${o.type}</div></td>
+   <td style="max-width:340px"><div style="color:var(--ink-2)">${o.text}</div></td><td>${o.surface}</td><td>${o.lang}</td>
+   <td><div class="cell-flex"><span class="avatar">${o.owner.split(' ').map(w=>w[0]).join('').slice(0,2)}</span><span class="cell-sub">${o.owner}</span></div></td>
+   <td class="cell-sub">${o.edited}</td><td class="cell-sub">${o.perf}</td><td>${badge(o.status)}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+}
+
+/* =========================================================================
+   UPLOAD (landing → opens wizard)
+========================================================================= */
+function renderUpload(c){
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Upload Clip</div><div class="page-sub">A guided 5-step flow: asset, metadata, copy &amp; CTA, rights &amp; safety, pack assignment.</div></div></div>
+ <div class="card"><div class="card-body" style="text-align:center;padding:46px">
+   <div class="dz-ico" style="margin:0 auto 14px;width:56px;height:56px">${ic('upload')}</div>
+   <div style="font-size:18px;font-weight:720">Start a new clip upload</div>
+   <div class="muted" style="max-width:460px;margin:8px auto 20px">Drop a vertical 9:16 clip and the wizard will walk you through metadata, copy, rights and review before it goes anywhere near a Moment Pack.</div>
+   <button class="btn btn-primary" onclick="openWizard()">${ic('plus')} Open Upload Wizard</button>
+ </div></div>
+ <div class="two-col" style="margin-top:18px">
+   ${['Asset','Metadata','Copy & CTA','Rights & Safety','Pack & Review'].map((s,i)=>`<div class="card"><div class="card-body"><div class="row"><span class="avatar" style="background:var(--ink)">${i+1}</span><b>Step ${i+1}: ${s}</b></div><div class="muted" style="margin-top:8px;font-size:12.5px">${['Video file, thumbnail, aspect ratio, duration, subtitle file, low-data fallback.','Clip title, parent title, provider, type, language, genre, cast / team / match tags.','Display title, caption, muted caption, spoiler-safe synopsis, CTA, share copy, recommendation reason.','Rating, spoiler level, in-app & share permission, deep link, expiry, geo, allowed surfaces, kids eligibility.','Assign to a Moment Pack, preview position, submit for review or save as draft.'][i]}</div></div></div>`).join('')}
+ </div>`;
+}
+
+/* =========================================================================
+   REVIEW QUEUE
+========================================================================= */
+function renderReview(c){
+ const lanes=['Asset Review','Copy Review','CTA Review','Rights Review','Safety Review','Partner Approval','Ready to Publish'];
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Review Queue</div><div class="page-sub">Asset, copy, CTA, rights, safety, partner approval, and ready-to-publish lanes.</div></div>
+  <div class="right"><span class="chip warn">${ic('alert')} 4 high priority</span></div></div>
+ ${lanes.map(L=>{const items=REVIEWS.filter(r=>r.lane===L);if(!items.length)return'';
+  return `<div class="lane"><div class="lane-head">${L} <span class="lh-c">${items.length}</span></div>
+   ${items.map(r=>{const st=state.reviewStatus[r.id];return `<div class="review-item" id="rev-${r.id}">
+    <div class="ri-pri pri-${r.pri}"></div>
+    <div class="ri-main"><div class="ri-t">${r.item} <span class="tag" style="margin-left:4px">${r.type}</span></div>
+     <div class="ri-issue">${r.issue}</div>
+     <div class="ri-sug">${ic('info',2.2)} Suggested: ${r.sug}</div></div>
+    <div class="ri-meta"><span class="avatar">${r.owner}</span><span class="badge ${r.pri==='high'?'b-rejected':r.pri==='med'?'b-pending':'b-draft'}" style="text-transform:capitalize">${r.pri} priority</span></div>
+    <div class="ri-acts" id="acts-${r.id}">${st?badge(st):`
+      <button class="btn btn-sm btn-ok" onclick="event.stopPropagation();reviewAct('${r.id}','Approved')">${ic('check')} Approve</button>
+      <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();reviewAct('${r.id}','Rejected')">${ic('x')} Reject</button>`}</div>
+   </div>`}).join('')}</div>`;}).join('')}`;
+}
+function reviewAct(id,status){
+ state.reviewStatus[id]=status;
+ const acts=$('#acts-'+id);if(acts)acts.innerHTML=badge(status)+`<button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();undoReview('${id}')">Undo</button>`;
+ toast((status==='Approved'?'Approved: ':'Rejected: ')+(REVIEWS.find(r=>r.id===id).item),status==='Approved'?'ok':'warn');
+}
+function undoReview(id){delete state.reviewStatus[id];renderReview($('#content'));}
+
+/* =========================================================================
+   RIGHTS & ENTITLEMENTS
+========================================================================= */
+function renderRights(c){
+ const cell=v=>v==='yes'?'<span class="yes">●</span>':v==='no'?'<span class="no">○</span>':'<span class="part">◐</span>';
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Rights &amp; Entitlements</div><div class="page-sub">What each partner allows — clip, poster, recap, share, CTA, deep link, TV, AI montage.</div></div></div>
+ <div class="help-note">${ic('info')}<div>Some partners may allow in-app clip playback but not poster use in external share cards. Rights must stay valid through the full campaign window.</div></div>
+ <div class="card"><div class="card-head"><span class="ct">Rights Matrix</span><span class="cs">● allowed · ◐ partial / conditional · ○ not allowed</span></div>
+ <div class="tbl-wrap"><table class="tbl matrix"><thead><tr><th>Provider</th><th>Title</th><th>Clip</th><th>Poster</th><th>Recap</th><th>External Share</th><th>CTA</th><th>Deep Link</th><th>TV / Box</th><th>AI Montage</th><th>Rating Meta</th><th>Expiry</th><th>Entitlement</th></tr></thead><tbody>
+ ${RIGHTS.map(r=>{const exp=r.expiry.includes('Jul 2026');return `<tr style="cursor:default"><td class="cell-title">${r.prov}</td><td>${r.title}</td>
+  <td>${cell(r.clip)}</td><td>${cell(r.poster)}</td><td>${cell(r.recap)}</td><td class="cell-sub">${r.share}</td><td>${cell(r.cta)}</td><td>${cell(r.deeplink)}</td><td>${cell(r.tv)}</td><td>${cell(r.ai)}</td><td>${cell(r.rating)}</td>
+  <td class="${exp?'':''}">${exp?`<span class="chip warn">${r.expiry}</span>`:`<span class="cell-sub">${r.expiry}</span>`}</td><td><span class="tag">${r.ent}</span></td></tr>`}).join('')}
+ </tbody></table></div></div>`;
+}
+
+/* =========================================================================
+   TREND RADAR
+========================================================================= */
+function renderTrend(c){
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Trend Radar</div><div class="page-sub">Demand signals turned into Moment Pack opportunities — with rights and approval checks.</div></div></div>
+ <div class="help-note warn-note">${ic('alert')}<div><b>Trend Radar suggests opportunities. It does not auto-publish</b> new clips, posters, or copy. Every candidate needs human approval before it goes live.</div></div>
+ <div class="trend-grid">${TRENDS.map(t=>{const auto=t.approval.startsWith('Auto');return `
+  <div class="trend-card"><div class="tc-top"><div class="tc-spark">${ic('trend')}</div>
+    <div><div style="font-weight:700">${t.signal}</div><div class="muted" style="font-size:12px">${t.type}</div></div>
+    <div style="margin-left:auto" class="tc-rank">${ic('trend',2.4)} ${t.rank}</div></div>
+   <div class="muted" style="font-size:12.5px;margin-bottom:8px">${t.detail}</div>
+   <div class="trend-row"><span class="tk">Suggested pack</span><span class="tv">${t.pack}</span></div>
+   <div class="trend-row"><span class="tk">Poster direction</span><span class="tv">${t.poster}</span></div>
+   <div class="trend-row"><span class="tk">Suggested CTA</span><span class="tv"><span class="chip soft">${t.cta}</span></span></div>
+   <div class="trend-row"><span class="tk">Rights status</span><span class="tv">${t.cleared.startsWith('Yes')?'<span class="badge b-live">'+t.cleared+'</span>':'<span class="badge b-pending">'+t.cleared+'</span>'}</span></div>
+   <div class="trend-row"><span class="tk">Approval</span><span class="tv">${auto?'<span class="badge b-approved">'+t.approval+'</span>':t.approval}</span></div>
+   <div class="trend-acts"><button class="btn btn-sm btn-primary" onclick="trendAct('${t.id}','create')">${ic('plus')} Create Pack</button>
+    <button class="btn btn-sm" onclick="trendAct('${t.id}','approve')">${ic('check')} Send for approval</button>
+    <button class="btn btn-sm btn-ghost" onclick="trendAct('${t.id}','dismiss')">Dismiss</button></div></div>`}).join('')}</div>`;
+}
+function trendAct(id,act){const t=TRENDS.find(x=>x.id===id);
+ if(act==='create'){toast('Draft pack created from “'+t.signal+'” — opening editor',' ok');setTimeout(()=>openPackEditor(null,t),350);return;}
+ if(act==='approve'){toast('Sent “'+t.signal+'” candidate for approval','info');return;}
+ toast('Dismissed “'+t.signal+'” from Trend Radar','warn');
+}
+
+/* =========================================================================
+   CLIP QUALITY
+========================================================================= */
+function renderQuality(c){
+ const ranked=[...CLIPS].sort((a,b)=>b.q-a.q);
+ const sel=ranked[0];
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Clip Quality</div><div class="page-sub">A composite score across hook, completion, conversion, copy, CTA, poster, trust and playback.</div></div></div>
+ <div class="editor-split" style="grid-template-columns:340px 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--panel)">
+  <div style="border-right:1px solid var(--line-2);overflow:auto;max-height:70vh">
+   ${ranked.map(cl=>`<div class="assign-row" style="border:none;border-bottom:1px solid var(--line-2);border-radius:0;margin:0;cursor:pointer" onclick="qSelect('${cl.id}')" id="qrow-${cl.id}">
+     ${poster(cl.art,`<div class="dur">${cl.dur}</div>`)}
+     <div class="ar-main"><div class="cell-title">${cl.title}</div><div class="cell-sub">${cl.provider} · ${cl.type}</div></div>
+     <div style="text-align:right"><div class="b" style="font-size:16px;color:${cl.q>=80?'var(--live)':cl.q<60?'var(--rejected)':'var(--pending)'}">${cl.q}</div><div class="cell-sub">score</div></div></div>`).join('')}
+  </div>
+  <div id="qDetail" style="padding:20px;overflow:auto;max-height:70vh"></div>
+ </div>`;
+ qSelect(sel.id);
+}
+function qSelect(id){
+ const cl=CLIPS.find(x=>x.id===id);
+ document.querySelectorAll('[id^=qrow-]').forEach(r=>r.style.background='');
+ const row=$('#qrow-'+id);if(row)row.style.background='var(--red-50)';
+ const recs=[];
+ if(cl.qc['Poster CTR']>=70 && cl.qc['Watch Full']<72)recs.push(['High poster CTR but low Watch Full CTR — test a clearer CTA','Rewrite CTA']);
+ if(cl.qc.CTA<75)recs.push(['CTA underperforming for this surface','Rewrite CTA']);
+ if(cl.qc.Copy<72)recs.push(['Caption not converting — try a tighter hook line','Replace caption']);
+ if(cl.qc.Hook<70)recs.push(['Weak 3s hook — request a stronger thumbnail / cold open','Request better thumbnail']);
+ if(cl.q<60)recs.push(['Below promotion threshold — retire or limit to recap packs','Retire clip']);
+ if(cl.qc['Add to Watchlist']>=66)recs.push(['Strong watchlist intent — add to AI voiceover candidate pool','Add to AI pool']);
+ if(cl.spoiler===2)recs.push(['Major spoiler — restrict to detail page, never Home','Move to detail page']);
+ if(!recs.length)recs.push(['Performing well across the board — eligible for repeated promotion','Promote pack poster']);
+ $('#qDetail').innerHTML=`
+  <div class="row" style="gap:18px;align-items:flex-start;margin-bottom:18px">
+   <div class="score-ring" style="--p:${cl.q}"><div class="sv">${cl.q}<br><small>/100</small></div></div>
+   <div><div style="font-size:17px;font-weight:730">${cl.title}</div><div class="muted">${cl.parent} · ${cl.provider}</div>
+    <div class="row wrap" style="margin-top:8px;gap:6px">${badge(cl.status)}<span class="tag">${cl.type}</span><span class="tag">${cl.lang}</span>${spoilerBadge(cl.spoiler)}</div>
+    <div class="row" style="margin-top:10px"><button class="btn btn-sm" onclick="openClipDetail('${cl.id}')">${ic('eye')} Open clip</button></div></div></div>
+  <div class="card-head" style="padding:0 0 12px;border:none"><span class="ct">Score components</span></div>
+  <div class="qbars">${Object.entries(cl.qc).map(([k,v])=>`<div class="qbar"><div class="ql">${k}</div><div class="qt"><div class="qf" style="width:${v}%;${v<60?'background:linear-gradient(90deg,#D23A3A,#F08)':v<75?'background:linear-gradient(90deg,#B27400,#F5AF19)':''}"></div></div><div class="qv">${v}</div></div>`).join('')}</div>
+  <div class="divider"></div>
+  <div class="card-head" style="padding:0 0 12px;border:none"><span class="ct">Recommended actions</span></div>
+  ${recs.map(r=>`<div class="action-item" style="cursor:default;margin-bottom:8px"><div class="ai-ico" style="background:var(--red-50);color:var(--red)">${ic('wand')}</div>
+   <div><div class="ai-t" style="font-weight:600;color:var(--ink)">${r[0]}</div></div>
+   <div style="margin-left:auto"><button class="btn btn-sm" onclick="toast('Action queued: ${r[1]}','info')">${r[1]}</button></div></div>`).join('')}`;
+}
+
+/* =========================================================================
+   REPORTS
+========================================================================= */
+function renderReports(c){
+ const bars=[['Find your next watch in 5 clips',68],['Catch up before Season 3',74],['Top cricket moments',81],['Award-winning picks',59]];
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Reports</div><div class="page-sub">Conversion impact of Moments on starts, watchlist adds, and completion.</div></div>
+   <div class="right"><div class="chip">${ic('calendar')} Last 30 days</div><button class="btn btn-sm">${ic('share')} Export</button></div></div>
+ <div class="kpi-grid">${[['trend','38.2k','Clip-assisted starts','+12.6%','up'],['quality','79','Avg quality score','+4 pts','up'],['heart','9.4%','Avg add-to-watchlist','+1.8 pts','up'],['share','61%','Avg share success','-2.1 pts','down']].map(k=>`<div class="kpi"><div class="k-top"><div class="k-ico">${ic(k[0])}</div><span class="k-delta k-${k[4]}">${k[3]}</span></div><div class="k-val">${k[1]}</div><div class="k-lab">${k[2]}</div></div>`).join('')}</div>
+ <div class="two-col">
+  <div class="card"><div class="card-head"><span class="ct">Pack completion rate</span></div><div class="card-body"><div class="qbars">${bars.map(b=>`<div class="qbar" style="grid-template-columns:200px 1fr 42px"><div class="ql">${b[0]}</div><div class="qt"><div class="qf" style="width:${b[1]}%"></div></div><div class="qv">${b[1]}%</div></div>`).join('')}</div></div></div>
+  <div class="card"><div class="card-head"><span class="ct">Starts by surface</span></div><div class="card-body"><div class="qbars">${[['Home Moment Pack rail',54],['Title-detail page',23],['Sports rail',15],['Smart Decision Card',8]].map(b=>`<div class="qbar" style="grid-template-columns:200px 1fr 42px"><div class="ql">${b[0]}</div><div class="qt"><div class="qf" style="width:${b[1]}%"></div></div><div class="qv">${b[1]}%</div></div>`).join('')}</div></div></div>
+ </div>
+ <div class="card"><div class="card-head"><span class="ct">Conversion funnel — Home rail packs</span></div><div class="card-body"><div class="qbars">${[['Pack impression',100],['Pack opened',38],['Clip 3s hold',31],['Clip completed',22],['Watch Full tapped',14],['Title started',11]].map(b=>`<div class="qbar" style="grid-template-columns:160px 1fr 42px"><div class="ql">${b[0]}</div><div class="qt"><div class="qf" style="width:${b[1]}%"></div></div><div class="qv">${b[1]}%</div></div>`).join('')}</div></div></div>`;
+}
+
+/* =========================================================================
+   SETTINGS
+========================================================================= */
+function renderSettings(c){
+ c.innerHTML=`
+ <div class="page-head"><div><div class="page-title">Settings</div><div class="page-sub">Workspace, roles, guardrails, and surface configuration.</div></div></div>
+ <div class="two-col">
+  <div class="card"><div class="card-head"><span class="ct">Roles &amp; Permissions</span></div><div class="card-body">
+   ${Object.entries(ROLE_NOTES).map(([r,n])=>`<div class="check"><div><div class="ct">${r}</div><div class="cd">${n}</div></div></div>`).join('')}</div></div>
+  <div class="card"><div class="card-head"><span class="ct">Copy Guardrails</span></div><div class="card-body">
+   ${['No fake urgency or clickbait','No misleading claims or unsupported price','No spoilers in Home-surface copy','No external ratings unless licensed','Enforce per-surface character limits','AI voiceover scripts require human QA'].map(g=>`<div class="check"><input type="checkbox" checked><div class="ct">${g}</div></div>`).join('')}</div></div>
+ </div>
+ <div class="card"><div class="card-head"><span class="ct">Surfaces</span><span class="cs">Where Moments can appear</span></div><div class="card-body"><div class="action-grid">
+   ${['Home Moment Pack rail','Title-detail page','Sports rail','Search results','Watchlist reminder','Push notification','Smart Decision Card','AI Voiceover Montage','Best Way to Watch sheet'].map(s=>`<div class="check" style="border:1px solid var(--line);border-radius:10px;padding:11px"><input type="checkbox" checked><div class="ct">${s}</div></div>`).join('')}</div></div></div>`;
+}
+
+/* =========================================================================
+   TOAST
+========================================================================= */
+function toast(msg,kind){
+ kind=(kind||'ok').trim();
+ const t=document.createElement('div');t.className='toast '+kind;
+ t.innerHTML=ic(kind==='warn'?'alert':kind==='info'?'info':'check')+'<span>'+msg+'</span>';
+ $('#toasts').appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(8px)';t.style.transition='.3s';setTimeout(()=>t.remove(),300);},2600);
+}
+
+/* =========================================================================
+   MODAL ROOT HELPERS
+========================================================================= */
+function closeModal(){const o=$('#modalRoot .overlay');if(o){o.classList.remove('show');setTimeout(()=>{$('#modalRoot').innerHTML='';},200);}}
+function mountModal(html){$('#modalRoot').innerHTML=html;requestAnimationFrame(()=>$('#modalRoot .overlay').classList.add('show'));}
+function readImage(input,cb){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsDataURL(f);}
+
+/* === modal definitions === */
+const LANGS=['English','Hindi','Tamil','Telugu','Bengali','Marathi','Multi'];
+const SURFACES=['Home rail','Home + detail page','Title-detail page','Sports rail','Search result preview','AI Voiceover Montage'];
+const STATUSES=['Draft','Pending Review','Approved','Scheduled','Live','Expired','Rejected'];
+const INTENTS=['Undecided browsing','Returning viewer','Sports catch-up','Low-friction conversion','Regional discovery','Quality discovery','Personalised conversion','Social discovery'];
+const GENRES=['Mixed','Thriller','Crime','Comedy Drama','Drama','Sports','Action','Romance'];
+const STYLES=['Single title','Collage','Stacked vertical cards','Sports moment','Recap card','AI montage card'];
+const POSTERS=[['Thriller',G.thriller],['Crime',G.mirzapur],['Recap',G.recap],['Sports',G.cricket],['Award',G.award],['AI Montage',G.ai],['Regional',G.tamil],['Plan',G.plan],['Social',G.social],['Sony',G.sony],['Zee',G.zee],['Sun',G.sun]];
+const CLIP_CTAS=['Watch Full','Watch Full Series','Watch Full Movie','Watch Full Highlights','Start Episode','Start Season 3','Continue Series','Watch Highlights','Watch Live','Watch Replay','Add to Watchlist','Unlock & Watch','Continue on TV'];
+const opt=(arr,val)=>arr.map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('');
+const clone=o=>JSON.parse(JSON.stringify(o));
+const bgcss=a=>(a&&(a.indexOf('data:')===0||a.indexOf('http')===0||a.indexOf('blob:')===0))?('center/cover url('+a+')'):a;
+
+/* ============================================================ MOMENT PACK EDITOR */
+let pe={};
+function openPackEditor(id,trend){
+ const src=id?PACKS.find(p=>p.id===id):null;
+ pe=src?{...src,clipsList:CLIPS.filter(c=>c.pack===src.title)}:{id:null,title:'Untitled Moment Pack',internal:'new_moment_pack',sub:'Add a subtitle…',desc:'',cta:'Explore Moments',intent:'Undecided browsing',lang:'English',genre:'Mixed',providers:'Prime Video, SonyLIV',surface:'Home rail',status:'Draft',art:G.thriller,style:'Stacked vertical cards',accent:'#E8000D'};
+ pe.notif=pe.notif||('New on Xstream: '+pe.title);
+ pe.sdc=pe.sdc||'You seem into crime thrillers. Start one now?';
+ pe.share=pe.share||('Caught this on Airtel Xstream — '+pe.title);
+ pe.empty=pe.empty||'No moments here yet. Check back soon.';
+ pe.alt=pe.alt||(pe.title+' poster');
+ if(!pe.clipsList||!pe.clipsList.length)pe.clipsList=[CLIPS[2],CLIPS[3],CLIPS[12]];
+ if(trend){pe.title=trend.pack;pe.cta=trend.cta;pe.sub=trend.detail;pe.internal=trend.signal.toLowerCase().replace(/[^a-z0-9]+/g,'_');}
+ state._peSurface='home';
+ mountModal(peHTML(!!src));peTab(0);pePreviewRender();
+}
+function peHTML(editing){
+ const tabs=['Identity','Poster','Copy &amp; CTA','Clips','Targeting','Schedule','Preview'];
+ return `<div class="overlay"><div class="modal lg"><div class="modal-head">
+   <div><div class="mt">${editing?'Edit Moment Pack':'Create Moment Pack'}</div><div class="ms">${editing?pe.title:'Build an entry card that opens into the vertical clip feed.'}</div></div>
+   <button class="x" onclick="closeModal()">${ic('x')}</button></div>
+  <div class="editor-split">
+   <div class="editor-main">
+    <div class="ed-tabs">${tabs.map((t,i)=>`<div class="ed-tab" id="petab-${i}" onclick="peTab(${i})">${i+1}. ${t}</div>`).join('')}</div>
+    <div id="pepane-0" class="ed-pane">${peIdentity()}</div>
+    <div id="pepane-1" class="ed-pane" style="display:none">${pePoster()}</div>
+    <div id="pepane-2" class="ed-pane" style="display:none">${peCopy()}</div>
+    <div id="pepane-3" class="ed-pane" style="display:none">${peClipsPane()}</div>
+    <div id="pepane-4" class="ed-pane" style="display:none">${peTargeting()}</div>
+    <div id="pepane-5" class="ed-pane" style="display:none">${peSchedule()}</div>
+    <div id="pepane-6" class="ed-pane" style="display:none">${pePreviewPane()}</div>
+   </div>
+   <div class="editor-preview">
+    <div class="pv-label">Live preview <div class="seg">
+      <button class="on" onclick="peSurf('home',this)">Home</button><button onclick="peSurf('feed',this)">Feed</button>
+      <button onclick="peSurf('sdc',this)">Decision</button><button onclick="peSurf('share',this)">Share</button></div></div>
+    <div class="phone"><div class="phone-scr"><div class="phone-notch"></div><div id="pePhone"></div></div></div>
+    <div style="color:#7A808C;font-size:11px;text-align:center;margin-top:12px">Updates live as you edit copy, CTA &amp; poster</div>
+   </div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+   <button class="btn" onclick="toast('Saved draft: '+pe.title,'ok')">Save draft</button>
+   <div class="right"><button class="btn" onclick="toast('Sent for review: '+pe.title,'info');closeModal()">Send for review</button>
+    <button class="btn btn-primary" onclick="toast('Scheduled &amp; queued to publish: '+pe.title,'ok');closeModal()">${ic('check')} Schedule &amp; Publish</button></div></div>
+ </div></div>`;
+}
+function peTab(i){for(let n=0;n<7;n++){$('#pepane-'+n).style.display=n===i?'block':'none';$('#petab-'+n).classList.toggle('on',n===i);}}
+function peSurf(s,btn){state._peSurface=s;btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');pePreviewRender();}
+
+function peIdentity(){return `<h4>Pack Identity</h4><div class="ph-sub">What this pack is and where it lives.</div>
+ <div class="field"><label>Pack title <span class="req">*</span></label><input class="inp" value="${pe.title}" oninput="pe.title=this.value;syncTitles();pePreviewRender()"></div>
+ <div class="field-row"><div class="field"><label>Internal name</label><input class="inp mono" value="${pe.internal}" oninput="pe.internal=this.value"></div>
+  <div class="field"><label>Status</label><select onchange="pe.status=this.value">${opt(STATUSES,pe.status)}</select></div></div>
+ <div class="field"><label>Subtitle</label><input class="inp" value="${pe.sub}" oninput="pe.sub=this.value;pePreviewRender()"></div>
+ <div class="field"><label>Description</label><textarea oninput="pe.desc=this.value">${pe.desc}</textarea></div>
+ <div class="field-row three"><div class="field"><label>Target user intent</label><select onchange="pe.intent=this.value">${opt(INTENTS,pe.intent)}</select></div>
+  <div class="field"><label>Language</label><select onchange="pe.lang=this.value;pePreviewRender()">${opt(LANGS,pe.lang)}</select></div>
+  <div class="field"><label>Genre</label><select onchange="pe.genre=this.value">${opt(GENRES,pe.genre)}</select></div></div>
+ <div class="field-row"><div class="field"><label>Provider mix</label><input class="inp" value="${pe.providers}" oninput="pe.providers=this.value;pePreviewRender()"></div>
+  <div class="field"><label>Surface placement</label><select onchange="pe.surface=this.value;pePreviewRender()">${opt(SURFACES,pe.surface)}</select></div></div>`;}
+
+function pePoster(){return `<h4>Poster / Card Creative</h4><div class="ph-sub">The promise users see before they tap in.</div>
+ <div class="help-note">${ic('info')}<div>Poster should communicate the pack’s promise quickly. Avoid clickbait or misleading urgency.</div></div>
+ <div class="field"><label>Upload poster / card image</label>
+  <label class="dropzone" style="padding:18px"><input type="file" accept="image/*" style="display:none" onchange="readImage(this,u=>{pe.art=u;pePreviewRender();markPosterUpload()})">
+   <div id="posterDz"><div class="dz-ico">${ic('image')}</div><div class="dz-t">Drop poster or click to upload</div><div class="dz-s">9:16 · PNG/JPG · updates the live preview instantly</div></div></label></div>
+ <div class="field"><label>Or pick a preset style</label><div class="row wrap" id="posterSwatches">
+  ${POSTERS.map(p=>`<div onclick="peSetPoster('${p[1]}',this)" title="${p[0]}" style="width:46px;height:62px;border-radius:8px;background:${p[1]};cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);${pe.art===p[1]?'outline:3px solid var(--red);outline-offset:1px':''}"></div>`).join('')}</div></div>
+ <div class="field-row"><div class="field"><label>Poster style</label><select onchange="pe.style=this.value">${opt(STYLES,pe.style)}</select></div>
+  <div class="field"><label>Background / accent</label><input class="inp" type="color" value="${pe.accent}" oninput="pe.accent=this.value" style="height:38px;padding:3px"></div></div>
+ <div class="field"><label>Poster alt text</label><input class="inp" value="${pe.alt}" oninput="pe.alt=this.value"></div>
+ <div class="field-row"><div class="field"><label>Mobile poster</label><label class="dropzone" style="padding:12px"><input type="file" accept="image/*" style="display:none"><div class="dz-s">Optional override for small screens</div></label></div>
+  <div class="field"><label>Low-network fallback</label><label class="dropzone" style="padding:12px"><input type="file" accept="image/*" style="display:none"><div class="dz-s">Static thumbnail for data-saver mode</div></label></div></div>`;}
+
+function peCopy(){const inSet=CTA_OPTIONS.includes(pe.cta);return `<h4>Copy &amp; CTA</h4><div class="ph-sub">Every string the user reads on this pack.</div>
+ <div class="warn-note help-note">${ic('alert')}<div>CTA should describe the next action clearly. Avoid vague labels like “Go” or manipulative copy like “You won’t believe this.”</div></div>
+ <div class="field"><label>Pack title</label><input class="inp" id="peTitle2" value="${pe.title}" oninput="pe.title=this.value;syncTitles();pePreviewRender()"><div class="cc"><small>Shown on the Home card</small><small id="ccTitle">${pe.title.length}/60</small></div></div>
+ <div class="field"><label>Pack subtitle</label><input class="inp" value="${pe.sub}" oninput="pe.sub=this.value;pePreviewRender()"></div>
+ <div class="field"><label>CTA label</label><select id="peCtaSel" onchange="peCTA(this.value)">${opt(CTA_OPTIONS,inSet?pe.cta:'+ Custom CTA…')}</select>
+  <div id="peCustomWrap" style="display:${inSet?'none':'block'};margin-top:8px"><input class="inp" id="peCustomCta" placeholder="Custom CTA label" value="${inSet?'':pe.cta}" oninput="pe.cta=this.value;pePreviewRender()"></div></div>
+ <div class="field-row"><div class="field"><label>Notification copy</label><input class="inp" value="${pe.notif}" oninput="pe.notif=this.value;pePreviewRender()"></div>
+  <div class="field"><label>Empty state copy</label><input class="inp" value="${pe.empty}" oninput="pe.empty=this.value"></div></div>
+ <div class="field"><label>Smart Decision Card copy</label><input class="inp" value="${pe.sdc}" oninput="pe.sdc=this.value;pePreviewRender()"></div>
+ <div class="field"><label>Share copy</label><input class="inp" value="${pe.share}" oninput="pe.share=this.value;pePreviewRender()"></div>`;}
+function peCTA(v){if(v.indexOf('Custom')>=0){$('#peCustomWrap').style.display='block';const c=$('#peCustomCta');pe.cta=c.value||'';c.focus();}else{pe.cta=v;$('#peCustomWrap').style.display='none';}pePreviewRender();}
+function syncTitles(){const a=$('#peTitle2');if(a&&a.value!==pe.title)a.value=pe.title;const c=$('#ccTitle');if(c)c.textContent=pe.title.length+'/60';}
+function peSetPoster(art,el){pe.art=art;document.querySelectorAll('#posterSwatches div').forEach(d=>d.style.outline='');el.style.outline='3px solid var(--red)';el.style.outlineOffset='1px';pePreviewRender();}
+function markPosterUpload(){const d=$('#posterDz');if(d)d.innerHTML='<div class="dz-ico" style="color:var(--live)">'+ic('check')+'</div><div class="dz-t">Poster uploaded</div><div class="dz-s">Preview updated — click to replace</div>';}
+
+function peClipsPane(){return `<h4>Clip Assignment</h4><div class="ph-sub">${pe.clipsList.length} clips · drag to reorder the feed sequence.</div>
+ <div class="help-note">${ic('info')}<div><b>Rules:</b> no major spoilers in Home packs · respect language &amp; rating · rights valid through campaign · minimum quality score for repeat promotion.</div></div>
+ <div id="peClips"></div>
+ <button class="btn btn-sm" style="margin-top:6px" onclick="peAddClip()">${ic('plus')} Add clip from library</button>`;}
+function peRenderClips(){const el=$('#peClips');if(!el)return;el.innerHTML=pe.clipsList.map((c,i)=>`
+ <div class="assign-row" draggable="true" ondragstart="peDragStart(event,${i})" ondragover="event.preventDefault()" ondrop="peDrop(event,${i})">
+  <span class="drag">${ic('drag')}</span>${poster(c.art,`<div class="dur">${c.dur}</div>`)}
+  <div class="ar-main"><div class="cell-title">${c.title}</div><div class="cell-sub">${c.parent} · ${c.provider}</div>
+   <div class="row wrap" style="margin-top:4px;gap:5px"><span class="tag">${c.rating}</span>${spoilerBadge(c.spoiler)}<span class="chip ${c.q>=80?'soft':''}" style="padding:1px 7px">Q ${c.q}</span></div></div>
+  <div style="text-align:right"><div class="cell-sub">${c.rights.indexOf('share')>0?'Share ✓':'In-app'}</div>
+   <button class="btn btn-sm btn-ghost" onclick="peRemoveClip(${i})" style="margin-top:4px">Remove</button></div></div>`).join('')||'<div class="empty">'+ic('clips')+'<div>No clips yet. Add from the library.</div></div>';}
+function peDragStart(e,i){window._pd=i;e.dataTransfer.effectAllowed='move';}
+function peDrop(e,i){e.preventDefault();const f=window._pd;if(f==null||f===i)return;const a=pe.clipsList,[m]=a.splice(f,1);a.splice(i,0,m);window._pd=null;peRenderClips();pePreviewRender();}
+function peAddClip(){const used=new Set(pe.clipsList.map(c=>c.id));const next=CLIPS.find(c=>!used.has(c.id));if(!next){toast('All library clips are already in this pack','warn');return;}pe.clipsList.push(next);peRenderClips();pePreviewRender();toast('Added “'+next.title+'” to pack','ok');}
+function peRemoveClip(i){const r=pe.clipsList.splice(i,1)[0];peRenderClips();pePreviewRender();toast('Removed “'+r.title+'”','warn');}
+
+function peTargeting(){const chk=(t,d,on)=>`<label class="check"><input type="checkbox" ${on?'checked':''}><div><div class="ct">${t}</div>${d?`<div class="cd">${d}</div>`:''}</div></label>`;
+ return `<h4>Targeting &amp; Eligibility</h4><div class="ph-sub">Where this pack may appear and who may see it.</div>
+ <div class="card-head" style="padding:0 0 8px;border:none"><span class="ct">Eligible surfaces</span></div>
+ ${['Home rail','Title-detail page','Sports rail','Search result preview','Watchlist reminder','Push notification','Smart Decision Card'].map((s,i)=>chk(s,'',i<3)).join('')}
+ <div class="divider"></div><div class="card-head" style="padding:0 0 8px;border:none"><span class="ct">Eligible users</span></div>
+ ${['New users','Returning users','Sports followers','Regional viewers','Users with title in watchlist','Users with current entitlement'].map((s,i)=>chk(s,'',i<2)).join('')}
+ <div class="divider"></div><div class="card-head" style="padding:0 0 8px;border:none"><span class="ct">Exclusions</span></div>
+ ${chk('Kids profile','Never show mature moments to kids profiles',true)}
+ ${chk('Mature-content restricted users','Respect parental controls',true)}
+ ${chk('Users who already finished the title','Avoid redundant recaps',false)}
+ ${chk('Users without entitlement','Unless showing Best Way to Watch',true)}`;}
+
+function peSchedule(){return `<h4>Schedule</h4><div class="ph-sub">When this pack runs.</div>
+ <div class="field-row"><div class="field"><label>Start date / time</label><input class="inp" type="datetime-local" value="2026-06-24T18:00"></div>
+  <div class="field"><label>End date / time</label><input class="inp" type="datetime-local" value="2026-07-14T23:59"></div></div>
+ <div class="field"><label>Campaign window</label><input class="inp" value="Pre–Season 3 launch" placeholder="e.g. New season launch"></div>
+ <div class="field"><label>Recurrence</label><select>${opt(['One-time','Daily','Weekly','Match-day only','New season launch'],'New season launch')}</select></div>
+ <div class="warn-note help-note">${ic('clock')}<div><b>Expiry warning:</b> one clip’s rights (Vikram Vedha, SunNXT) expire 15 Jul 2026 — before the campaign end. Confirm an extension or swap the clip.</div></div>`;}
+
+function pePreviewPane(){return `<h4>Preview surfaces</h4><div class="ph-sub">The live phone on the right mirrors these. Switch surfaces using the toggle.</div>
+ <div class="check" style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:9px"><div>${ic('packs')}</div><div><div class="ct">Home card preview</div><div class="cd">Poster, title, subtitle, CTA on the Home rail.</div></div></div>
+ <div class="check" style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:9px"><div>${ic('clips')}</div><div><div class="ct">Clip feed preview</div><div class="cd">First clip with caption, CTA, Add to Watchlist &amp; Share.</div></div></div>
+ <div class="check" style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:9px"><div>${ic('sparkle')}</div><div><div class="ct">Smart Decision Card preview</div><div class="cd">Headline + recommended titles + CTA buttons.</div></div></div>
+ <div class="check" style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:9px"><div>${ic('share')}</div><div><div class="ct">Share card preview</div><div class="cd">Title card, share message &amp; deep link behaviour.</div></div></div>
+ <div class="check" style="border:1px solid var(--line);border-radius:10px;padding:12px"><div>${ic('bell')}</div><div><div class="ct">Push notification preview</div><div class="cd" style="margin-top:6px"><div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:9px"><div class="row"><span class="avatar" style="border-radius:6px">X</span><div><div style="font-weight:650;font-size:12.5px">Airtel Xstream Play</div><div class="cell-sub">${pe.notif}</div></div></div></div></div></div></div>`;}
+
+function pePreviewRender(){if($('#peClips'))peRenderClips();const p=$('#pePhone');if(p)p.innerHTML=peScreen(state._peSurface);}
+function peScreen(s){
+ const c0=pe.clipsList[0];
+ if(s==='feed'){const bg=c0?bgcss(c0.art):bgcss(pe.art);
+  return `<div class="pv-feed" style="background:${bg}"><div class="f-side">
+    <div><div class="fb">${icf('heart')}</div><div class="fl">12k</div></div>
+    <div><div class="fb">${ic('share')}</div><div class="fl">Share</div></div>
+    <div><div class="fb">${ic('plus')}</div><div class="fl">List</div></div></div>
+   <div class="f-bot">${c0&&c0.spoiler>0?'<div class="f-spoiler">🛡 Spoiler-safe synopsis</div>':''}
+    <div class="f-cap">${c0?c0.cap:pe.sub}</div><div class="f-meta">${c0?c0.parent+' · '+c0.provider:pe.providers}</div>
+    <div class="f-cta">${(c0?c0.cta:pe.cta)||'Watch Full'}</div>
+    <div class="f-sec"><div>+ Add to Watchlist</div><div>${ic('share',2)} Share</div></div></div></div>`;}
+ if(s==='sdc'){return `<div class="pv-sdc"><div class="sdc"><div class="s-ey">Smart Decision</div><div class="s-h">${pe.sdc}</div>
+   ${pe.clipsList.slice(0,3).map(c=>`<div class="s-row"><div class="st" style="background:${bgcss(c.art)}"></div><div><div class="sn">${c.parent}</div><div class="sm">${c.provider} · ${c.rating}</div></div></div>`).join('')}
+   <div class="s-btns"><div class="b1">${pe.cta||'Watch'}</div><div class="b2">Add Picks to Watchlist</div></div></div></div>`;}
+ if(s==='share'){const link=(c0?c0.deeplink:'xstream://pack/'+(pe.internal||'pack'));
+  return `<div class="pv-share"><div class="share-card"><div class="sc-img" style="background:${bgcss(pe.art)}"><div class="sc-t">${pe.title}</div></div>
+   <div class="sc-b"><div class="sc-msg">${pe.share}</div><div class="sc-link">${ic('globe',2)} ${link}</div>
+    <div class="sc-brand"><span class="m">X</span> Airtel Xstream Play · Best Way to Watch</div></div></div></div>`;}
+ // home
+ return `<div class="pv-home"><div class="pv-status"><span>9:41</span><span>${ic('eye',2)} Xstream</span></div>
+  <div class="pv-h-title">Good evening 👋</div><div class="pv-h-rail-lab">${pe.surface}</div>
+  <div class="pv-card" style="background:${bgcss(pe.art)}"><span class="c-badge">${pe.lang} · ${pe.genre}</span>
+   <div class="c-t">${pe.title}</div><div class="c-s">${pe.sub}</div><div class="pv-cta">${pe.cta||'Explore Moments'}</div></div>
+  <div class="pv-thumbs">${pe.clipsList.slice(0,4).map(c=>`<div style="background:${bgcss(c.art)}"></div>`).join('')}</div>
+  <div class="pv-h-rail-lab" style="margin-top:14px">Because you watch thrillers</div>
+  <div class="pv-thumbs">${pe.clipsList.slice(0,4).map(c=>`<div style="background:${bgcss(c.art)};height:70px"></div>`).join('')}</div></div>`;
+}
+
+/* ============================================================ CLIP DETAIL PANEL */
+function openClipDetail(id){const c=CLIPS.find(x=>x.id===id);if(!c)return;
+ const card=(t,b)=>`<div class="card" style="margin-bottom:13px"><div class="card-head" style="padding:12px 15px"><span class="ct">${t}</span></div><div class="card-body" style="padding:14px 15px">${b}</div></div>`;
+ const kv=rows=>`<dl class="kv">${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl>`;
+ const perf=c.perf;
+ const body=`
+  ${card('Clip Asset',`<div style="height:150px;border-radius:10px;background:${bgcss(c.art)};position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+    <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;color:var(--red)">${icf('play')}</div>
+    <div class="dur" style="position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.7);color:#fff;padding:1px 6px;border-radius:4px;font-size:11px">${c.dur}</div></div>
+    ${kv([['Aspect ratio',c.ratio],['Duration',c.dur],['Audio language',c.audio],['Subtitles',c.subs]])}`)}
+  ${card('Parent Title',kv([['Parent title','<b>'+c.parent+'</b>'],['Provider',c.provider],['Type',c.type],['Genre',c.lang+' · '+c.rating],['Deep link','<span class="mono cell-sub">'+c.deeplink+'</span>'],['Best Way to Watch',c.rights.indexOf('Add-on')>0?'Partner add-on sheet':'In-app · entitled']]))}
+  ${card('Clip Copy &amp; CTA',`
+    <div class="field"><label>Clip display title</label><input class="inp" value="${c.title}"></div>
+    <div class="field"><label>Context caption</label><textarea oninput="cdPrev()" id="cdCap">${c.cap}</textarea></div>
+    <div class="field-row"><div class="field"><label>Muted caption</label><input class="inp" value="${c.cap.split(' ').slice(0,5).join(' ')}…"></div>
+     <div class="field"><label>Spoiler-safe synopsis</label><input class="inp" value="${c.spoiler>0?'A turning point — without the reveal.':c.cap}"></div></div>
+    <div class="field-row"><div class="field"><label>CTA label</label><select id="cdCta" onchange="cdPrev()">${opt(CLIP_CTAS,CLIP_CTAS.includes(c.cta)?c.cta:'Watch Full')}</select></div>
+     <div class="field"><label>Recommendation reason</label><input class="inp" value="Because you watch ${c.lang} ${c.type.toLowerCase()}s"></div></div>
+    <div class="field"><label>Share message</label><input class="inp" value="Caught this on Airtel Xstream — ${c.parent}."></div>
+    <div class="warn-note help-note" style="margin:4px 0 0">${ic('info')}<div><b>Continue on TV</b> is not a default clip CTA — it should appear only after Watch Full intent, recap completion, or a Smart Decision Card.</div></div>`)}
+  ${card('Rights &amp; Sharing',`
+    <label class="check"><input type="checkbox" ${c.share!=='Not allowed'?'':''} checked><div class="ct">In-app playback allowed</div></label>
+    <div class="field" style="margin-top:8px"><label>External share behaviour</label>
+     ${['Clip','Title card','Deep link','Not allowed'].map(o=>`<label class="check"><input type="radio" name="cdShare" ${ (c.share.indexOf(o)>=0||(o==='Not allowed'&&c.share==='Not allowed'))?'checked':''}><div class="ct">${o}</div></label>`).join('')}</div>
+    <div class="field-row"><div class="field"><label>Rights start</label><input class="inp" type="date" value="2026-01-01"></div><div class="field"><label>Rights expiry</label><input class="inp" type="date" value="2026-09-30"></div></div>
+    <div class="field-row"><div class="field"><label>Geo restriction</label><input class="inp" value="India only"></div><div class="field"><label>Surface restriction</label><input class="inp" value="${c.spoiler===2?'Detail page only':'All eligible'}"></div></div>`)}
+  ${card('Moment Pack Assignment',PACKS.map(p=>`<label class="check"><input type="checkbox" ${p.title===c.pack?'checked':''}><div class="ct">${p.title}</div></label>`).join(''))}
+  ${card('Performance',`<div class="v-stats" style="grid-template-columns:repeat(3,1fr)">
+    ${[['3s hold',perf.hold],['Completion',perf.comp],['Watch Full CTR',perf.wf],['Add to WL',perf.wl],['Share success',perf.shr],['Complaint',perf.cmp],['Buffering',perf.buf],['Assisted starts',perf.starts],['Quality',c.q]].map(s=>`<div class="v-stat"><div class="vv">${s[1]}</div><div class="vl">${s[0]}</div></div>`).join('')}</div>`)}`;
+ mountModal(`<div class="overlay"><div class="sheet"><div class="modal-head">
+   <div class="cell-flex">${poster(c.art,`<div class="dur">${c.dur}</div>`)}<div><div class="mt">${c.title}</div><div class="ms">${c.parent} · ${c.provider}</div></div></div>
+   <button class="x" onclick="closeModal()">${ic('x')}</button></div>
+  <div class="modal-body">${body}</div>
+  <div class="modal-foot"><div class="row">${badge(c.status)}<span class="chip ${c.q>=80?'soft':''}">Quality ${c.q}</span></div>
+   <div class="right"><button class="btn" onclick="toast('Saved changes to “${c.title}”','ok')">Save</button>
+    <button class="btn btn-primary" onclick="toast('Sent “${c.title}” for review','info');closeModal()">Send for review</button></div></div>
+ </div></div>`);
+}
+function cdPrev(){toast('Preview refreshed','info');}
+
+/* ============================================================ COPY EDITOR */
+let ce={};
+const baseVariants=[
+ {tag:'A',text:'Find your next watch in 5 clips',imp:'128,400',ctr:'14.2%',wf:'9.1%',wl:'6.4%',neg:'0.3%',winner:true},
+ {tag:'B',text:'5 clips to pick tonight’s movie',imp:'126,900',ctr:'12.8%',wf:'8.4%',wl:'5.9%',neg:'0.4%'},
+ {tag:'C',text:'Not sure what to watch? Start here.',imp:'63,200',ctr:'11.1%',wf:'7.2%',wl:'7.1%',neg:'0.6%'}
+];
+const LIMITS={'Moment Pack title':60,'Moment Pack subtitle':80,'Moment Pack CTA':24,'Clip CTA':24,'Clip caption':90,'Smart Decision Card headline':70,'Smart Decision Card CTA':24,'Best Way to Watch copy':90,'Share message':120,'Notification text':120,'Low-network message':70,'AI voiceover script':400};
+function openCopyEditor(id){const row=id?COPY.find(x=>x.id===id):null;
+ ce={type:row?row.type:'Moment Pack title',surface:row?row.surface:'Home rail',lang:row?row.lang:'English',text:row?row.text:'',tone:'Clear',owner:row?row.owner:'Content Ops',status:row?row.status:'Draft'};
+ ce.variants=id==='y1'?clone(baseVariants):[{tag:'A',text:ce.text||'New copy variant',imp:row?'—':'0',ctr:row?row.perf:'—',wf:'—',wl:'—',neg:'—',winner:true}];
+ const types=Object.keys(LIMITS);
+ mountModal(`<div class="overlay"><div class="modal md"><div class="modal-head">
+   <div><div class="mt">${row?'Edit Copy':'New Copy'}</div><div class="ms">${ce.type} · ${ce.surface}</div></div><button class="x" onclick="closeModal()">${ic('x')}</button></div>
+  <div class="modal-body">
+   <div class="field-row"><div class="field"><label>Copy type</label><select onchange="ce.type=this.value;ccCount()">${opt(types,ce.type)}</select></div>
+    <div class="field"><label>Surface</label><select onchange="ce.surface=this.value">${opt(['Home rail','Clip feed','Smart Decision Card','Bottom sheet','Share card','Push notification','AI Voiceover Montage'],ce.surface)}</select></div></div>
+   <div class="field-row three"><div class="field"><label>Language</label><select onchange="ce.lang=this.value">${opt(LANGS,ce.lang)}</select></div>
+    <div class="field"><label>Tone</label><select onchange="ce.tone=this.value">${opt(['Clear','Premium','Sports','Recap','Regional','Subscription'],ce.tone)}</select></div>
+    <div class="field"><label>Status</label><select onchange="ce.status=this.value">${opt(['Draft','Pending Review','Needs Review','Approved','Live','Rejected'],ce.status)}</select></div></div>
+   <div class="field"><label>Current copy</label><textarea id="ceText" oninput="ce.text=this.value;ccCount()">${ce.text}</textarea><div class="cc"><small id="ceCountWarn">Owner: ${ce.owner}</small><small id="ceCount"></small></div></div>
+   <div class="divider"></div>
+   <div class="card-head" style="padding:0 0 10px;border:none"><span class="ct">Variant testing</span><div class="right"><button class="btn btn-sm" onclick="addVariant()">${ic('plus')} Add variant</button></div></div>
+   <div id="ceVariants"></div>
+   <div class="divider"></div>
+   <div class="card-head" style="padding:0 0 10px;border:none"><span class="ct">Guardrails</span></div>
+   <div id="ceGuards"></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+   <div class="right"><button class="btn" onclick="toast('Saved copy draft','ok')">Save</button>
+    <button class="btn" onclick="toast('Sent copy for review','info')">Send for review</button>
+    <button class="btn btn-primary" onclick="toast('Copy approved','ok');closeModal()">${ic('check')} Approve</button></div></div>
+ </div></div>`);
+ renderVariants();ccCount();
+}
+function renderVariants(){$('#ceVariants').innerHTML=ce.variants.map((v,i)=>`
+ <div class="variant ${v.winner?'winner':''}"><div class="v-head"><div class="v-tag">${v.tag}</div>
+   <input class="inp" value="${v.text}" oninput="ce.variants[${i}].text=this.value" style="border:none;font-weight:600;padding:4px 0">
+   ${v.winner?'<span class="badge b-live" style="margin-left:auto">Winner</span>':`<button class="btn btn-sm btn-ghost" style="margin-left:auto" onclick="toast('Promoted variant ${v.tag} to winner','ok')">Make winner</button>`}</div>
+  <div class="v-stats">
+   <div class="v-stat"><div class="vv">${v.imp}</div><div class="vl">Impressions</div></div>
+   <div class="v-stat"><div class="vv">${v.ctr}</div><div class="vl">CTR</div></div>
+   <div class="v-stat"><div class="vv">${v.wf}</div><div class="vl">Watch Full</div></div>
+   <div class="v-stat"><div class="vv">${v.neg}</div><div class="vl">Negative</div></div></div></div>`).join('');}
+function addVariant(){const next=String.fromCharCode(65+ce.variants.length);ce.variants.push({tag:next,text:'New variant — type to edit',imp:'0',ctr:'—',wf:'—',wl:'—',neg:'—'});renderVariants();toast('Added variant '+next+' — now collecting impressions','info');}
+function ccCount(){const lim=LIMITS[ce.type]||120,n=(ce.text||'').length,el=$('#ceCount');if(el){el.textContent=n+'/'+lim;el.style.color=n>lim?'var(--rejected)':'var(--muted-2)';}renderGuards(n,lim);}
+function renderGuards(n,lim){const g=$('#ceGuards');if(!g)return;const t=(ce.text||'').toLowerCase();
+ const checks=[
+  ['No fake urgency',!/won't believe|hurry|last chance|now or never/.test(t)],
+  ['No misleading claims',!/guaranteed|#1|best ever/.test(t)],
+  ['No spoiler in copy',!(ce.surface==='Home rail'&&/dies|killer is|ending|finale reveal/.test(t))],
+  ['No unsupported price',!/₹|rs\.?\s?\d|free forever/.test(t)],
+  ['No external rating unless licensed',!/imdb|rotten/.test(t)],
+  ['Character count within limit',n<=lim&&n>0]
+ ];
+ g.innerHTML=checks.map(c=>`<div class="guard ${c[1]?'pass':'fail'}"><div class="g-ico">${ic(c[1]?'check':'x')}</div><div>${c[0]}</div><div style="margin-left:auto" class="cell-sub">${c[1]?'Pass':'Review'}</div></div>`).join('');}
+
+/* ============================================================ UPLOAD WIZARD */
+let wz={};
+function openWizard(){wz={step:1,thumb:null,videoName:null,title:'',parent:'',provider:'Prime Video',caption:'A tense crime drama about power and revenge.',cta:'Watch Full Series'};
+ mountModal(`<div class="overlay"><div class="modal lg"><div class="modal-head">
+   <div><div class="mt">Upload Clip</div><div class="ms">Five guided steps from asset to review.</div></div><button class="x" onclick="closeModal()">${ic('x')}</button></div>
+  <div class="steps">${['Upload Asset','Add Metadata','Copy &amp; CTA','Rights &amp; Safety','Pack &amp; Review'].map((s,i)=>`<div class="step" id="wstep-${i+1}"><span class="sn">${i+1}</span>${s}</div>`).join('')}</div>
+  <div class="modal-body" id="wzBody" style="min-height:340px"></div>
+  <div class="modal-foot" id="wzFoot"></div>
+ </div></div>`);
+ wizardStep(1);
+}
+function wizardStep(n){wz.step=Math.max(1,Math.min(5,n));
+ for(let i=1;i<=5;i++){const s=$('#wstep-'+i);s.classList.toggle('on',i===wz.step);s.classList.toggle('done',i<wz.step);}
+ $('#wzBody').innerHTML=[wzStep1,wzStep2,wzStep3,wzStep4,wzStep5][wz.step-1]();
+ if(wz.step===3)wzPreview();
+ $('#wzFoot').innerHTML=`<button class="btn btn-ghost" ${wz.step===1?'disabled style="opacity:.4"':''} onclick="wizardStep(${wz.step-1})">${ic('left')} Back</button>
+  <div class="right"><button class="btn" onclick="toast('Saved clip draft','ok');closeModal()">Save draft</button>
+   ${wz.step<5?`<button class="btn btn-primary" onclick="wizardStep(${wz.step+1})">Next ${ic('right')}</button>`
+    :`<button class="btn btn-primary" onclick="toast('Clip submitted for review','ok');closeModal()">${ic('check')} Submit for review</button>`}</div>`;
+}
+function wzStep1(){return `<h4 style="margin:0 0 3px">Step 1 — Upload Asset</h4><div class="ph-sub">The video and its supporting files.</div>
+ <label class="dropzone ${wz.videoName?'filled':''}" id="wzVideoDz"><input type="file" accept="video/*" style="display:none" onchange="wz.videoName=(this.files[0]||{}).name||'clip.mp4';wizardStep(1)">
+  <div class="dz-ico">${ic(wz.videoName?'check':'upload')}</div><div class="dz-t">${wz.videoName||'Drop vertical clip or click to upload'}</div><div class="dz-s">9:16 · MP4/MOV · max 60s recommended</div></label>
+ <div class="field-row" style="margin-top:14px"><div class="field"><label>Thumbnail</label>
+   <label class="dropzone" style="padding:14px;${wz.thumb?'border-color:var(--live);background:var(--live-bg)':''}"><input type="file" accept="image/*" style="display:none" onchange="readImage(this,u=>{wz.thumb=u;wizardStep(1)})">
+    ${wz.thumb?`<div style="height:60px;border-radius:8px;background:center/cover url(${wz.thumb})"></div><div class="dz-s" style="margin-top:6px">Uploaded — click to replace</div>`:`<div class="dz-s">${ic('image')} Click to upload thumbnail</div>`}</label></div>
+  <div class="field"><label>Low-data fallback thumbnail</label><label class="dropzone" style="padding:14px"><input type="file" accept="image/*" style="display:none"><div class="dz-s">${ic('image')} Static image for data-saver</div></label></div></div>
+ <div class="field-row three"><div class="field"><label>Aspect ratio</label><select>${opt(['9:16','1:1','16:9'],'9:16')}</select></div>
+  <div class="field"><label>Duration</label><input class="inp" value="0:48" placeholder="0:45"></div>
+  <div class="field"><label>Subtitle file</label><label class="dropzone" style="padding:9px"><input type="file" style="display:none"><div class="dz-s">.srt / .vtt</div></label></div></div>`;}
+function wzStep2(){return `<h4 style="margin:0 0 3px">Step 2 — Add Metadata</h4><div class="ph-sub">Identify the clip and its source.</div>
+ <div class="field-row"><div class="field"><label>Clip title <span class="req">*</span></label><input class="inp" value="${wz.title}" placeholder="e.g. Crime Thriller Opening Hook" oninput="wz.title=this.value"></div>
+  <div class="field"><label>Parent title <span class="req">*</span></label><input class="inp" value="${wz.parent}" placeholder="e.g. Mirzapur" oninput="wz.parent=this.value"></div></div>
+ <div class="field-row three"><div class="field"><label>Provider</label><select onchange="wz.provider=this.value">${opt(['Prime Video','SonyLIV','Zee5','SunNXT','Airtel Sports','Lionsgate Play'],wz.provider)}</select></div>
+  <div class="field"><label>Content type</label><select>${opt(['Movie scene','Show scene','Trailer moment','Season recap','Sports moment','AI montage asset','Trend Radar candidate'],'Show scene')}</select></div>
+  <div class="field"><label>Language</label><select>${opt(LANGS,'Hindi')}</select></div></div>
+ <div class="field-row"><div class="field"><label>Genre</label><select>${opt(GENRES,'Crime')}</select></div>
+  <div class="field"><label>Cast / team / player tags</label><input class="inp" placeholder="comma separated"></div></div>
+ <div class="field-row three"><div class="field"><label>Episode / season</label><input class="inp" placeholder="S2 E5"></div>
+  <div class="field"><label>Match / tournament</label><input class="inp" placeholder="optional"></div>
+  <div class="field"><label>Player</label><input class="inp" placeholder="optional"></div></div>`;}
+function wzStep3(){return `<div class="editor-split" style="grid-template-columns:1fr 250px;gap:18px"><div>
+  <h4 style="margin:0 0 3px">Step 3 — Copy &amp; CTA</h4><div class="ph-sub">How this clip reads across surfaces.</div>
+  <div class="field"><label>Display title</label><input class="inp" value="${wz.title||'Crime Thriller Opening Hook'}" oninput="wz.title=this.value;wzPreview()"></div>
+  <div class="field"><label>Context caption</label><textarea oninput="wz.caption=this.value;wzPreview()">${wz.caption}</textarea></div>
+  <div class="field-row"><div class="field"><label>Muted caption</label><input class="inp" value="Power. Revenge. Survival."></div>
+   <div class="field"><label>Spoiler-safe synopsis</label><input class="inp" value="A gritty world you won’t want to leave."></div></div>
+  <div class="field-row"><div class="field"><label>CTA label</label><select onchange="wz.cta=this.value;wzPreview()">${opt(CLIP_CTAS,wz.cta)}</select></div>
+   <div class="field"><label>Recommendation reason</label><input class="inp" value="Because you watch Hindi thrillers"></div></div>
+  <div class="field"><label>Share copy</label><input class="inp" value="Caught this on Airtel Xstream — worth a watch."></div>
+  <div class="field"><label>Smart Decision Card copy (if used)</label><input class="inp" value="You seem into crime thrillers. Start one now?"></div>
+ </div>
+ <div class="editor-preview" style="border-radius:14px;padding:16px"><div class="pv-label">Clip screen</div>
+   <div class="phone" style="width:210px"><div class="phone-scr" style="height:400px"><div class="phone-notch"></div><div id="wzPhone"></div></div></div></div></div>`;}
+function wzPreview(){const p=$('#wzPhone');if(!p)return;const bg=wz.thumb?('center/cover url('+wz.thumb+')'):G.mirzapur;
+ p.innerHTML=`<div class="pv-feed" style="background:${bg}"><div class="f-side">
+   <div><div class="fb">${icf('heart')}</div></div><div><div class="fb">${ic('share')}</div></div><div><div class="fb">${ic('plus')}</div></div></div>
+  <div class="f-bot"><div class="f-cap">${wz.caption}</div><div class="f-meta">${wz.parent||'Parent title'} · ${wz.provider}</div>
+   <div class="f-cta">${wz.cta}</div><div class="f-sec"><div>+ Watchlist</div><div>Share</div></div></div></div>`;}
+function wzStep4(){const chk=(t,d,on)=>`<label class="check"><input type="checkbox" ${on?'checked':''}><div><div class="ct">${t}</div>${d?`<div class="cd">${d}</div>`:''}</div></label>`;
+ return `<h4 style="margin:0 0 3px">Step 4 — Rights &amp; Safety</h4><div class="ph-sub">Permissions, ratings and safety before this clip is eligible anywhere.</div>
+ <div class="field-row three"><div class="field"><label>Content rating <span class="req">*</span></label><select>${opt(['U','U/A 7+','U/A 13+','U/A 16+','A'],'A')}</select></div>
+  <div class="field"><label>Spoiler level</label><select>${opt(['No spoiler','Mild spoiler','Major spoiler'],'No spoiler')}</select></div>
+  <div class="field"><label>Expiry</label><input class="inp" type="date" value="2026-12-31"></div></div>
+ <div class="two-col" style="margin-bottom:0"><div>${chk('In-app playback allowed','',true)}
+   <div class="field" style="margin-top:6px"><label>External share behaviour</label>
+   ${['Clip','Title card','Deep link','Not allowed'].map((o,i)=>`<label class="check"><input type="radio" name="wzShare" ${i===1?'checked':''}><div class="ct">${o}</div></label>`).join('')}</div></div>
+  <div>${chk('Deep link available','Opens the title in-app',true)}
+   <div class="field" style="margin-top:6px"><label>Geo restriction</label><input class="inp" value="India only"></div>
+   ${chk('Kids / family profile eligible','Only if rating is U or U/A 7+',false)}</div></div>
+ <div class="field"><label>Allowed surfaces</label><div class="action-grid" style="grid-template-columns:repeat(3,1fr)">
+   ${['Home rail','Title-detail page','Sports rail','Search preview','Smart Decision Card','AI Voiceover Montage'].map((s,i)=>`<label class="check" style="border:1px solid var(--line);border-radius:9px;padding:9px"><input type="checkbox" ${i<2?'checked':''}><div class="ct" style="font-size:12px">${s}</div></label>`).join('')}</div></div>`;}
+function wzStep5(){return `<h4 style="margin:0 0 3px">Step 5 — Pack Assignment &amp; Review</h4><div class="ph-sub">Place the clip and send it on its way.</div>
+ <div class="field"><label>Assign to Moment Pack</label><select>${opt(['— Unassigned —',...PACKS.map(p=>p.title)],'Find your next watch in 5 clips')}</select></div>
+ <div class="field"><label>Preview pack position</label>
+   <div class="row wrap" style="gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2)">
+   ${[G.thriller,G.mirzapur,G.family,G.recap].map((a,i)=>`<div style="text-align:center"><div class="thumb" style="background:${a};${i===1?'outline:3px solid var(--red);outline-offset:1px':''}"></div><div class="cell-sub" style="font-size:10px;margin-top:3px">${i+1}</div></div>`).join('')}
+   <div class="cell-sub" style="align-self:center">New clip inserted at position 2</div></div></div>
+ <div class="card" style="margin-top:6px"><div class="card-head" style="padding:11px 14px"><span class="ct">Review summary</span></div><div class="card-body" style="padding:12px 14px">
+   <div class="guard pass"><div class="g-ico">${ic('check')}</div>Asset uploaded (${wz.videoName||'clip.mp4'}, ${wz.thumb?'thumbnail set':'thumbnail pending'})</div>
+   <div class="guard ${wz.title?'pass':'fail'}"><div class="g-ico">${ic(wz.title?'check':'x')}</div>${wz.title?'Metadata complete':'Clip title missing'}</div>
+   <div class="guard pass"><div class="g-ico">${ic('check')}</div>Copy &amp; CTA set · CTA “${wz.cta}”</div>
+   <div class="guard pass"><div class="g-ico">${ic('check')}</div>Rating &amp; rights captured</div></div></div>`;}
+
+
+/* =========================================================================
+   INIT
+========================================================================= */
+function init(){
+ renderNav();render();setRole(state.role);
+ $('#search').addEventListener('input',e=>{state.q=e.target.value;if(['packs','clips','copy'].includes(state.section))render();});
+ $('#fPartner').addEventListener('change',e=>{state.partner=e.target.value;render();});
+ $('#fLang').addEventListener('change',e=>{state.lang=e.target.value;render();});
+ $('#fStatus').addEventListener('change',e=>{state.status=e.target.value;render();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
