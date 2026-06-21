@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xstream Moments CMS</title>
+<style>
+/* ============================== TOKENS ============================== */
+:root{
+  --red:#E8000D; --red-600:#C2000B; --red-700:#9E0009; --red-50:#FDECEE; --red-100:#FBD9DC;
+  --bg:#F3F4F6; --panel:#FFFFFF; --panel-2:#FAFBFC;
+  --ink:#15171C; --ink-2:#3A3F47; --muted:#6A7180; --muted-2:#9AA1AD;
+  --line:#E6E8EC; --line-2:#EFF1F4;
+  --live:#1A8F5B; --live-bg:#E6F5EE;
+  --draft:#5B6472; --draft-bg:#EEF0F3;
+  --pending:#B27400; --pending-bg:#FBF0D9;
+  --approved:#1D6FE0; --approved-bg:#E7F0FD;
+  --scheduled:#7A45D6; --scheduled-bg:#F0E9FC;
+  --expired:#8A91A0; --expired-bg:#EFF1F4;
+  --rejected:#D23A3A; --rejected-bg:#FBE7E7;
+  --radius:12px; --radius-sm:9px;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 6px 16px rgba(16,24,40,.07);
+  --shadow-lg:0 12px 40px rgba(16,24,40,.18);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+svg{width:18px;height:18px;flex-shrink:0}
+.chip svg,.tag svg{width:13px;height:13px}
+.pack-cta svg{width:14px;height:14px}
+.tc-rank svg{width:13px;height:13px}
+.pv-status svg{width:11px;height:11px}
+.f-sec svg,.sc-link svg{width:13px;height:13px}
+.ri-sug svg{width:12px;height:12px}
+.kv dd svg{width:13px;height:13px}
+input,select,textarea{font-family:inherit;font-size:14px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#D5D9DF;border-radius:8px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#C2C7CF}
+
+/* ============================== LAYOUT ============================== */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:250px;flex:0 0 250px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.content{flex:1;overflow:auto;padding:26px 30px 60px}
+
+/* ============================== BRAND / SIDEBAR ============================== */
+.brand{display:flex;align-items:center;gap:11px;padding:18px 18px 16px;border-bottom:1px solid var(--line-2)}
+.brand .mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--red),#FF4D2E);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;box-shadow:0 4px 10px rgba(232,0,13,.28)}
+.brand .bt{font-weight:750;font-size:15px;letter-spacing:-.2px;line-height:1.1}
+.brand .bs{font-size:11px;color:var(--muted-2);font-weight:500}
+.nav{padding:10px 12px;overflow:auto;flex:1}
+.nav-label{font-size:10.5px;font-weight:700;letter-spacing:.7px;color:var(--muted-2);text-transform:uppercase;padding:14px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;color:var(--ink-2);font-weight:550;cursor:pointer;position:relative;margin-bottom:1px;user-select:none}
+.nav-item svg{width:18px;height:18px;flex:0 0 18px;color:var(--muted)}
+.nav-item:hover{background:var(--panel-2)}
+.nav-item.active{background:var(--red-50);color:var(--red-700)}
+.nav-item.active svg{color:var(--red)}
+.nav-item.active::before{content:"";position:absolute;left:-12px;top:7px;bottom:7px;width:3px;background:var(--red);border-radius:0 3px 3px 0}
+.nav-item .pill{margin-left:auto;background:var(--red);color:#fff;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:20px}
+.nav-item.active .pill{background:var(--red)}
+.nav-foot{padding:12px 14px;border-top:1px solid var(--line-2);font-size:11.5px;color:var(--muted-2)}
+.nav-foot b{color:var(--ink-2);font-weight:650}
+
+/* ============================== TOPBAR ============================== */
+.topbar{display:flex;align-items:center;gap:12px;padding:12px 22px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.search{flex:1;min-width:220px;max-width:430px;position:relative;display:flex;align-items:center}
+.search svg{position:absolute;left:12px;width:17px;height:17px;color:var(--muted-2)}
+.search input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);outline:none}
+.search input:focus{border-color:var(--red-100);background:#fff;box-shadow:0 0 0 3px var(--red-50)}
+.sel{position:relative}
+.sel select{appearance:none;-webkit-appearance:none;padding:8px 30px 8px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink-2);font-weight:550;outline:none;cursor:pointer}
+.sel select:focus{border-color:var(--red-100);box-shadow:0 0 0 3px var(--red-50)}
+.sel::after{content:"";position:absolute;right:11px;top:50%;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-65%) rotate(45deg);pointer-events:none}
+.role-sel select{background:var(--ink);color:#fff;border-color:var(--ink)}
+.role-sel::after{border-color:#fff}
+.tb-spacer{flex:1}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:600;font-size:13.5px;white-space:nowrap}
+.btn svg{width:16px;height:16px}
+.btn:hover{background:var(--panel-2)}
+.btn-primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn-primary:hover{background:var(--red-600)}
+.btn-dark{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn-dark:hover{background:#000}
+.btn-sm{padding:6px 10px;font-size:12.5px;border-radius:8px}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--panel-2)}
+.btn-danger{color:var(--rejected);border-color:var(--line)}
+.btn-danger:hover{background:var(--rejected-bg);border-color:var(--rejected-bg)}
+.btn-ok{color:var(--live);border-color:var(--line)}
+.btn-ok:hover{background:var(--live-bg)}
+.perm-bar{display:flex;align-items:center;gap:9px;padding:8px 22px;background:#FFFBF3;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--ink-2)}
+.perm-bar svg{width:15px;height:15px;color:var(--pending);flex:0 0 15px}
+.perm-bar b{color:var(--ink)}
+
+/* ============================== PAGE HEAD ============================== */
+.page-head{display:flex;align-items:flex-end;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+.page-title{font-size:22px;font-weight:760;letter-spacing:-.4px}
+.page-sub{color:var(--muted);font-size:13px;margin-top:3px}
+.page-head .right{margin-left:auto;display:flex;gap:9px;align-items:center}
+
+/* ============================== KPI ============================== */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow)}
+.kpi .k-top{display:flex;align-items:center;justify-content:space-between}
+.kpi .k-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--red-50);color:var(--red)}
+.kpi .k-ico svg{width:16px;height:16px}
+.kpi .k-val{font-size:25px;font-weight:780;letter-spacing:-.6px;margin-top:9px;line-height:1}
+.kpi .k-lab{color:var(--muted);font-size:12.5px;margin-top:5px}
+.kpi .k-delta{font-size:11.5px;font-weight:650;margin-top:7px;display:inline-flex;align-items:center;gap:3px}
+.k-up{color:var(--live)} .k-down{color:var(--rejected)} .k-flat{color:var(--muted)}
+
+/* ============================== CARDS / SECTIONS ============================== */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-head{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line-2)}
+.card-head .ct{font-weight:680;font-size:14.5px}
+.card-head .cs{color:var(--muted);font-size:12px}
+.card-head .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.card-body{padding:16px 18px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.section-gap{margin-bottom:18px}
+
+/* action required */
+.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.action-item{display:flex;gap:11px;align-items:flex-start;padding:13px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer}
+.action-item:hover{border-color:var(--red-100);background:var(--red-50)}
+.action-item .ai-ico{width:30px;height:30px;border-radius:8px;background:var(--pending-bg);color:var(--pending);display:flex;align-items:center;justify-content:center;flex:0 0 30px}
+.action-item .ai-ico svg{width:16px;height:16px}
+.action-item .ai-n{font-weight:730;font-size:16px;line-height:1}
+.action-item .ai-t{font-size:12.5px;color:var(--ink-2);margin-top:3px}
+.action-item .ai-go{margin-left:auto;color:var(--muted-2)}
+
+/* ============================== TABLES ============================== */
+.tbl-wrap{overflow:auto;border-radius:var(--radius)}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-weight:650;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--panel-2)}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:var(--panel-2)}
+.tbl .num{font-variant-numeric:tabular-nums;font-weight:600}
+.cell-title{font-weight:650;color:var(--ink)}
+.cell-sub{color:var(--muted);font-size:12px}
+
+/* ============================== MISC ============================== */
+.muted{color:var(--muted)} 
+.b{font-weight:700} 
+.mono{font-variant-numeric:tabular-nums}
+.divider{height:1px;background:var(--line-2);margin:16px 0}
+.row{display:flex;align-items:center;gap:10px}
+
+@media (max-width:1180px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">X</div>
+      <div>
+        <div class="bt">Moments CMS</div>
+        <div class="bs">Airtel Xstream Play</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="nav-label">Menu</div>
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2Z"/><line x1="16" x2="16" y1="5" y2="15"/><circle cx="5.5" cy="12" r="1"/><circle cx="12.5" cy="12" r="1"/></svg>
+        Content Library
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        Schedule
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Reviews
+      </div>
+    </nav>
+    <div class="nav-foot">Signed in as <b id="footRole">Airtel Admin</b><br>Xstream Content Operations</div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-4.3-4.3"/><circle cx="11" cy="11" r="7"/></svg>
+        <input id="search" placeholder="Search packs, clips, titles, copy…" autocomplete="off">
+      </div>
+      <div class="sel"><select id="fPartner"><option>All Partners</option><option>Prime Video</option><option>SonyLIV</option><option>Zee5</option><option>SunNXT</option><option>Airtel Sports</option><option>Lionsgate Play</option></select></div>
+      <div class="sel"><select id="fLang"><option>All Languages</option><option>Hindi</option><option>English</option><option>Tamil</option><option>Telugu</option><option>Bengali</option><option>Marathi</option></select></div>
+      <div class="sel"><select id="fStatus"><option>All Status</option><option>Draft</option><option>Pending Review</option><option>Approved</option><option>Scheduled</option><option>Live</option><option>Expired</option><option>Rejected</option></select></div>
+      <button class="btn btn-primary">+ New Content</button>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="page-title">Content Dashboard</div>
+          <div class="page-sub">Manage all Xstream Moments content across partners and languages</div>
+        </div>
+        <div class="right">
+          <button class="btn btn-sm">Filters</button>
+          <button class="btn btn-sm">Export</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="k-top">
+            <div>Total Content</div>
+            <div class="k-ico">📦</div>
+          </div>
+          <div class="k-val">1,247</div>
+          <div class="k-lab">Active packs & clips</div>
+          <div class="k-delta k-up">↑ +12% this month</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">
+            <div>Live Now</div>
+            <div class="k-ico">🔴</div>
+          </div>
+          <div class="k-val">89</div>
+          <div class="k-lab">Currently streaming</div>
+          <div class="k-delta k-flat">→ +0% this week</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">
+            <div>Pending Review</div>
+            <div class="k-ico">⏳</div>
+          </div>
+          <div class="k-val">34</div>
+          <div class="k-lab">Awaiting approval</div>
+          <div class="k-delta k-down">↓ -2 from yesterday</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">
+            <div>Engagement</div>
+            <div class="k-ico">📈</div>
+          </div>
+          <div class="k-val">4.2M</div>
+          <div class="k-lab">Views this week</div>
+          <div class="k-delta k-up">↑ +8.5% avg</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="ct">Recent Content</div>
+            <div class="cs">Last updated in the past 24 hours</div>
+          </div>
+          <div class="right">
+            <button class="btn btn-sm btn-ghost">View All</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <p style="text-align: center; color: var(--muted); padding: 40px 20px;">
+            Sample CMS dashboard. Content library would display here with status badges, thumbnails, and engagement metrics.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Basic functionality
+document.getElementById('search').addEventListener('input', (e) => {
+  console.log('Search:', e.target.value);
+});
+
+document.getElementById('fPartner').addEventListener('change', (e) => {
+  console.log('Partner filter:', e.target.value);
+});
+
+document.getElementById('fLang').addEventListener('change', (e) => {
+  console.log('Language filter:', e.target.value);
+});
+
+document.getElementById('fStatus').addEventListener('change', (e) => {
+  console.log('Status filter:', e.target.value);
+});
+</script>
+</body>
+</html>
